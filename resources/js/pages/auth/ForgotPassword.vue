@@ -120,8 +120,8 @@
         let currentObj = this
         currentObj.errorAlert = false
         currentObj.overlay = true
-        axios.get('/sanctum/csrf-cookie').then(response => {
-          axios.post('/api/password/forgot', {
+        
+          axios.post('/api/auth/password/forgot', {
             email: currentObj.email,
           })
           .then(function (response) {
@@ -140,7 +140,6 @@
               currentObj.errorAlert = true
             }
           })
-        })
       } // end of forgot password method
     } // end of methods
   }

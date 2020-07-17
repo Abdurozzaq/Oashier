@@ -134,13 +134,13 @@
         let currentObj = this
         currentObj.errorAlert = false
         currentObj.overlay = true
-        axios.get('/sanctum/csrf-cookie').then(response => {
-          axios.post('/api/login', {
+
+          axios.post('api/auth/login', {
             email: currentObj.email,
             password: currentObj.password
           })
           .then(function (response) {
-            const token = response.data.token
+            const token = response.data.access_token
             console.log(token)
             // add bearer token to localstorage
             localStorage.setItem('userToken', token)
@@ -169,10 +169,9 @@
             currentObj.overlay = false
             if(error.response) {
               currentObj.serverError = error.response.data.errors
-              currentObj.errorAlert = true         
+              currentObj.errorAlert = true
             }
           })
-        })
       }, // end of login method
     } // end of methods
   }

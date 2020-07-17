@@ -22,6 +22,8 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer' + ' ' + token
 }
 
+console.log('route' + " " + token)
+
 Vue.use(VueRouter);
 const router = new VueRouter({
     mode: 'history',

@@ -159,8 +159,8 @@
         let currentObj = this
         currentObj.errorAlert = false
         currentObj.overlay = true
-        axios.get('/sanctum/csrf-cookie').then(response => {
-          axios.post('/api/register', {
+
+          axios.post('api/auth/register', {
             first_name: currentObj.first_name,
             last_name: currentObj.last_name,
             email: currentObj.email,
@@ -184,7 +184,7 @@
               currentObj.errorAlert = true
             }
           })
-        })
+
       } // end of login method
     }
   }

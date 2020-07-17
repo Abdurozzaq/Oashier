@@ -15,11 +15,12 @@ class CreateRestaurantMenusTable extends Migration
     {
         Schema::create('restaurant_menus', function (Blueprint $table) {
             $table->id();
-            $table->string('restaurant_id');
+            $table->string('user_id');
             $table->string('menu_name');
             $table->string('menu_description');
             $table->string('menu_price');
-            $table->boolean('menu_availability');
+            $table->string('menu_availability');
+            $table->string('menu_picture');
             $table->timestamps();
         });
     }

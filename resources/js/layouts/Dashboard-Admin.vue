@@ -171,7 +171,7 @@
         </v-card>
       </v-menu>
     </v-app-bar>
-    <v-content>
+    <v-main>
       <v-container
         class="fill-height"
         fluid
@@ -196,7 +196,7 @@
           </v-tooltip>
         </v-row>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -228,8 +228,7 @@
     methods: {
       logout: function() {
         let currentObj = this
-        axios.get('/sanctum/csrf-cookie').then(response => {
-          axios.post('/api/logout')
+          axios.post('/api/auth/logout')
           .then(function (response) {
             localStorage.removeItem('userToken')
             currentObj.$router.push('/login')
@@ -237,7 +236,6 @@
           .catch(function (error) {
             console.log(error);
           });
-        });
       }
     }
   }

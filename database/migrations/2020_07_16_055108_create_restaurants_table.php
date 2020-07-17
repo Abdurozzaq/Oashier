@@ -19,6 +19,9 @@ class CreateRestaurantsTable extends Migration
             $table->string('restaurant_name');
             $table->string('restaurant_description');
             $table->string('restaurant_address');
+            $table->string('midtrans_merchant_id')->nullable();
+            $table->string('midtrans_client_key')->nullable();
+            $table->string('midtrans_server_key')->nullable();
             $table->timestamps();
         });
     }

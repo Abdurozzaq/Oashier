@@ -28,6 +28,6 @@ class UsersTableSeeder extends Seeder
             'email' => 'user@gmail.com',
             'password' => Hash::make('password'),
             'email_verified_at' => $date
-        ])->assignRole('user');
+        ])->assignRole('cashier');
     }
 }

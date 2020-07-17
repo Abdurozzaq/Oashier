@@ -121,8 +121,7 @@
         let currentObj = this
         currentObj.errorAlert = false
         currentObj.overlay = true
-        axios.get('/sanctum/csrf-cookie').then(response => {
-          axios.post('/api/email/resend', {
+          axios.post('/api/auth/email/resend', {
             email: currentObj.email,
           })
           .then(function (response) {
@@ -139,7 +138,6 @@
               currentObj.errorAlert = true
             }
           })
-        })
       } // end of login method
     } // end of methods
   }

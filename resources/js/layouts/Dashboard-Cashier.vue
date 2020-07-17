@@ -1,78 +1,101 @@
 <template>
   <v-app id="inspire">
     <v-navigation-drawer
+      dark
+      src="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg"
       v-model="drawer"
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
+      elevation="4"
     >
-      <v-list dense>
-        <template v-for="sidebarItem in sidebar">
-          <v-row
-            v-if="sidebarItem.heading"
-            :key="sidebarItem.heading"
-            align="center"
-          >
-            <v-col cols="6">
-              <v-subheader v-if="sidebarItem.heading">
-                {{ sidebarItem.heading }}
-              </v-subheader>
-            </v-col>
-            <v-col
-              cols="6"
-              class="text-center"
-            >
-              <a
-                href="#!"
-                class="body-2 black--text"
-              >EDIT</a>
-            </v-col>
-          </v-row>
-          <v-list-group
-            v-else-if="sidebarItem.children"
-            :key="sidebarItem.text"
-            v-model="sidebarItem.model"
-            :prepend-icon="sidebarItem.model ? sidebarItem.icon : sidebarItem['icon-alt']"
-            append-icon=""
-          >
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ sidebarItem.text }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </template>
-            <v-list-item
-              v-for="(child, i) in sidebarItem.children"
-              :key="i"
-              link
-              :href="child.link"
-            >
-              <v-list-item-action v-if="child.icon">
-                <v-icon>{{ child.icon }}</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ child.text }}
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-group>
+
+      <template v-slot:prepend>
+        <v-list-item two-line>
+          <v-list-item-avatar>
+            <img src="https://randomuser.me/api/portraits/women/81.jpg">
+          </v-list-item-avatar>
+
+          <v-list-item-content>
+            <v-list-item-title>Sari Wardani</v-list-item-title>
+            <v-list-item-subtitle>Logged In</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+
+      <v-list>
+        <v-list-item
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-view-dashboard-outline</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Home Page</v-list-item-title>
+        </v-list-item>
+
+        <v-list-group
+          prepend-icon="mdi-note-text-outline"
+          value="true"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Order</v-list-item-title>
+          </template>
+
           <v-list-item
-            v-else
-            :key="sidebarItem.text"
             link
-            :href="sidebarItem.link"
           >
-            <v-list-item-action>
-              <v-icon>{{ sidebarItem.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ sidebarItem.text }}
-              </v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>Create Order</v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-note-plus-outline</v-icon>
+            </v-list-item-icon>
           </v-list-item>
-        </template>
+
+          <v-list-item
+            link
+          >
+            <v-list-item-title>Order List</v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-note-text-outline</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-group
+          prepend-icon="mdi-food"
+          value="true"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Menu</v-list-item-title>
+          </template>
+
+          <v-list-item
+            link
+            href="/home/menu/create"
+          >
+            <v-list-item-title>Create Menu</v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-plus-circle-outline</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+
+          <v-list-item
+            link
+          >
+            <v-list-item-title>Menu List</v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-format-list-bulleted-type</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </v-list-group>
+
+        <v-list-item
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-food</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Menu Stock</v-list-item-title>
+        </v-list-item>
+        
       </v-list>
     </v-navigation-drawer>
 
@@ -87,7 +110,7 @@
         style="width: 300px"
         class="ml-0 pl-4"
       >
-        <span class="hidden-sm-and-down">Toolity</span>
+        <span class="hidden-sm-and-down">OASHIER</span>
       </v-toolbar-title>
       <v-text-field
         flat
@@ -137,8 +160,8 @@
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title>John Leider</v-list-item-title>
-                <v-list-item-subtitle>Founder of Vuetify.js</v-list-item-subtitle>
+                <v-list-item-title>Sari Wardani</v-list-item-title>
+                <v-list-item-subtitle>Founder of Warung Sari Rasa</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -146,7 +169,7 @@
           <v-divider></v-divider>
 
           <v-list shaped dense>
-            <v-subheader>REPORTS</v-subheader>
+            <v-subheader>Account</v-subheader>
             <v-list-item-group v-model="itemPopup" color="primary">
               <v-list-item
                 v-for="(ip, i) in itemsPopup"
@@ -173,32 +196,13 @@
         </v-card>
       </v-menu>
     </v-app-bar>
-    <v-content>
+    <v-main>
       <v-container
-        class="fill-height"
         fluid
       >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                :href="source"
-                icon
-                large
-                target="_blank"
-                v-on="on"
-              >
-                <v-icon large>mdi-code-tags</v-icon>
-              </v-btn>
-            </template>
-            <span>Source</span>
-          </v-tooltip>
-        </v-row>
+        <router-view></router-view>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -214,12 +218,17 @@
       message: false,
       hints: true,
       dialog: false,
-      drawer: null,
+      drawer: true,
 
       itemPopup: 1,
       itemsPopup: [
         { text: 'Home', icon: 'mdi-view-dashboard', url: '/home' },
         { text: 'Settings', icon: 'mdi-account', url: '/settings' },
+      ],
+
+      items: [
+        ['mdi-view-dashboard', 'Home', '/home'],
+        ['mdi-account', 'Settings', '/settings'],
       ],
 
       sidebar: [
@@ -230,8 +239,7 @@
     methods: {
       logout: function() {
         let currentObj = this
-        axios.get('/sanctum/csrf-cookie').then(response => {
-          axios.post('/api/logout')
+          axios.post('/api/auth/logout')
           .then(function (response) {
             localStorage.removeItem('userToken')
             currentObj.$router.push('/login')
@@ -239,7 +247,6 @@
           .catch(function (error) {
             console.log(error);
           });
-        });
       }
     }
   }

@@ -22,7 +22,7 @@
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
-    <v-content class="gradient">
+    <v-main class="gradient">
 
       <!-- Provides the application the proper gutter -->
       <v-container fluid>
@@ -30,7 +30,7 @@
         <!-- If using vue-router -->
         <router-view></router-view>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
