@@ -10,6 +10,9 @@ import VueAxios from 'vue-axios'
 // For Router
 import VueRouter from 'vue-router';
 import { routes } from './Routes';
+// For Vuelidate
+import Vuelidate from 'vuelidate'
+
 
 // For AXIOS DEFAULT HEADERS
 axios.defaults.withCredentials = true
@@ -25,12 +28,14 @@ if (token) {
 console.log('route' + " " + token)
 
 Vue.use(VueRouter);
+Vue.use(Vuelidate)
 const router = new VueRouter({
     mode: 'history',
     routes
 });
  
 Vue.use(VueAxios, axios)
+
 
 const app = new Vue({
     vuetify,

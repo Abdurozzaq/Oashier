@@ -20,7 +20,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'me']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'me', 'refresh']]);
     }
 
 
@@ -28,12 +28,10 @@ class AuthController extends Controller
 
 
     public function refresh() {
-        
-
         return response()->json([
             'status' => 'success',
             //LALU PADA METHOD createToken(), TAMBAHKAN PARAMETER ABILITIESNYA
-            'token' => $this->respondWithToken(auth()->refresh()),
+            'token' => auth()->refresh(true, true),
         ], 200);
     }
 

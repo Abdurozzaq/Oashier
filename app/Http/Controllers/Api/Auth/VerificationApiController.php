@@ -53,7 +53,7 @@ class VerificationApiController extends Controller
             return response()->json([
                 'status' => 'failed',
                 'errors' => $validator->errors()
-            ], 401);
+            ], 400);
         } else {
 
             $user = User::where('email', $request->email)->first();

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\RestaurantMenu;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class RestaurantMenuController extends Controller
 {
@@ -24,11 +25,11 @@ class RestaurantMenuController extends Controller
         'menu_description' => 'required',
         'menu_price' => 'required',
         'menu_availability' => 'required',
-        'menu_picture' => 'required|image'
+        'menu_picture' => 'required|file|mimes:jpeg,png,jpg'
     ]);
     if($request->hasFile('menu_picture')){
       $resource = $request->file('menu_picture');
-      $name = $resource->getClientOriginalName();
+      $name = Carbon::now()->timestamp."_".$resource->getClientOriginalName();
       $userId = Auth::user()->id;
       $resource->move(\base_path() ."/public/storage/menu_picture/".$userId, $name);
 
