@@ -17,6 +17,7 @@ import RedirectAfterVerify from "./pages/auth/RedirectAfterVerify.vue"
 import LandingPage from "./pages/LandingPage.vue"
 import CashierHomePage from "./pages/cashier/HomePage.vue"
 import CreateMenuPage from "./pages/cashier/menu/CreateMenu.vue"
+import MenuListPage from "./pages/cashier/menu/MenuList.vue"
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -179,6 +180,14 @@ export const routes = [
                 component: CreateMenuPage,
                 meta: {
                     title: 'Create Menu - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "menu/list",
+                component: MenuListPage,
+                meta: {
+                    title: 'Menu List - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
             }

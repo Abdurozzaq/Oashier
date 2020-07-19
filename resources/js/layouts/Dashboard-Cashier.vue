@@ -79,6 +79,7 @@
 
           <v-list-item
             link
+            href="/home/menu/list"
           >
             <v-list-item-title>Menu List</v-list-item-title>
             <v-list-item-icon>

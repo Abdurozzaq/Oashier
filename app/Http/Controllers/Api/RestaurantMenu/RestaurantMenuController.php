@@ -19,6 +19,27 @@ class RestaurantMenuController extends Controller
     ], 200);
   }
 
+  public function showMenu() {
+    $data = RestaurantMenu::where('user_id', Auth::user()->id)->with('stockMenu')->get();
+
+    return response()->json([
+      'status' => 'success',
+      'menu' => $data
+    ], 200);
+  }
+
+  public function deleteMenu(Request $request) {
+    $menuId = $request->menuId;
+
+    $menu = RestaurantMenu::findOrFail($menuId);
+    $menu->delete();
+
+    return response()->json([
+      'status' => 'success',
+      'message' => 'Menu has been deleted Successfully'
+    ], 200);
+  }
+
   public function createMenu(Request $request) {
     $this->validate($request, [
         'menu_name' => 'required',
@@ -31,6 +52,7 @@ class RestaurantMenuController extends Controller
       $resource = $request->file('menu_picture');
       $name = Carbon::now()->timestamp."_".$resource->getClientOriginalName();
       $userId = Auth::user()->id;
+      $url = "/storage/menu_picture/".$userId."/".$name;
       $resource->move(\base_path() ."/public/storage/menu_picture/".$userId, $name);
 
       RestaurantMenu::create([
@@ -39,7 +61,7 @@ class RestaurantMenuController extends Controller
         'menu_description' => $request->menu_description,
         'menu_price' => $request->menu_price,
         'menu_availability' => $request->menu_availability,
-        'menu_picture' => $name
+        'menu_picture' => $url
       ]);
 
       return response()->json([
