@@ -8,6 +8,17 @@
       >
         <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">Your Menu :</div>
 
+        <v-text-field
+          label="Search By Name or Price"
+          hint="Case Sensitive"
+          outlined
+          v-model="searchValue"
+          append-outer-icon="mdi-send"
+          @click:append-outer="search"
+          max-width="64px"
+          class="mb-1"
+        ></v-text-field>
+
         <v-banner v-if="menuList == null || menuList.length == 0">
           You haven't created any menu at this time, make it by clicking on <a href="/home/menu/create">this.</a>
         </v-banner>
@@ -25,6 +36,14 @@
             </li>
           </ul>
         </v-alert>
+
+        <v-btn 
+          small
+          @click.prevent="getMenu"
+          class="mb-5"
+        >
+          Reload Data
+        </v-btn>
 
         <v-card class="mb-3" v-for="(menu, index) in menuList" :key="index">
           <v-list>
@@ -78,6 +97,7 @@
               </v-list-item-action>
             </v-list-item>
           </v-list>
+            
           <v-overlay
             :absolute="true"
             :value="overlay"
@@ -89,6 +109,8 @@
             ></v-progress-circular>
           </v-overlay>
         </v-card>
+
+        
       </v-col>
     </v-row>
 
@@ -153,6 +175,9 @@
           'No'
         ],
 
+        // Search
+        searchValue: null,
+
         // payload
         menu_name: null,
         menu_description: null,
@@ -215,8 +240,13 @@
             currentObj.successSnackbar = true
 
           })
-        
       },
+
+      search: function() {
+        let currentObj = this
+        currentObj.menuList = currentObj.menuList.filter(menuList => menuList.menu_name.includes(currentObj.searchValue) || menuList.menu_price.includes(currentObj.searchValue))
+        console.log('success filter data')
+      }
     },
 
     mounted: function() {

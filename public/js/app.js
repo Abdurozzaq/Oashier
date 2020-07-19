@@ -4374,6 +4374,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4382,6 +4404,8 @@ __webpack_require__.r(__webpack_exports__);
     return {
       dialog: false,
       menu_activate: ['Yes', 'No'],
+      // Search
+      searchValue: null,
       // payload
       menu_name: null,
       menu_description: null,
@@ -4435,6 +4459,13 @@ __webpack_require__.r(__webpack_exports__);
 
         currentObj.successSnackbar = true;
       });
+    },
+    search: function search() {
+      var currentObj = this;
+      currentObj.menuList = currentObj.menuList.filter(function (menuList) {
+        return menuList.menu_name.includes(currentObj.searchValue) || menuList.menu_price.includes(currentObj.searchValue);
+      });
+      console.log('success filter data');
     }
   },
   mounted: function mounted() {
@@ -9076,7 +9107,7 @@ var render = function() {
                                 { attrs: { align: "center", justify: "end" } },
                                 [
                                   _c("v-btn", { attrs: { type: "submit" } }, [
-                                    _vm._v("Create")
+                                    _vm._v("Edit")
                                   ])
                                 ],
                                 1
@@ -9221,6 +9252,25 @@ var render = function() {
                 [_vm._v("Your Menu :")]
               ),
               _vm._v(" "),
+              _c("v-text-field", {
+                staticClass: "mb-1",
+                attrs: {
+                  label: "Search By Name or Price",
+                  hint: "Case Sensitive",
+                  outlined: "",
+                  "append-outer-icon": "mdi-send",
+                  "max-width": "64px"
+                },
+                on: { "click:append-outer": _vm.search },
+                model: {
+                  value: _vm.searchValue,
+                  callback: function($$v) {
+                    _vm.searchValue = $$v
+                  },
+                  expression: "searchValue"
+                }
+              }),
+              _vm._v(" "),
               _vm.menuList == null || _vm.menuList.length == 0
                 ? _c("v-banner", [
                     _vm._v(
@@ -9259,6 +9309,21 @@ var render = function() {
                   ])
                 }),
                 0
+              ),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  staticClass: "mb-5",
+                  attrs: { small: "" },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.getMenu($event)
+                    }
+                  }
+                },
+                [_vm._v("\n        Reload Data\n      ")]
               ),
               _vm._v(" "),
               _vm._l(_vm.menuList, function(menu, index) {

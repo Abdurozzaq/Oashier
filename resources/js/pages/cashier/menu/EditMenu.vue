@@ -101,7 +101,7 @@
                     align="center"
                     justify="end"
                   >
-                    <v-btn type="submit" >Create</v-btn>
+                    <v-btn type="submit" >Edit</v-btn>
                   </v-row>
                 </v-list-item>
               </v-card-actions>
