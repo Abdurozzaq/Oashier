@@ -40,6 +40,17 @@ class RestaurantMenuController extends Controller
     ], 200);
   }
 
+  public function getMenu(Request $request) {
+    $menuId = $request->menuId;
+
+    $menu = RestaurantMenu::findOrFail($menuId);
+
+    return response()->json([
+      'status' => 'success',
+      'data' => $menu
+    ], 200);
+  }
+
   public function createMenu(Request $request) {
     $this->validate($request, [
         'menu_name' => 'required',
@@ -73,6 +84,48 @@ class RestaurantMenuController extends Controller
         'status' => 'failed',
         'message' => 'Image Not Found'
       ], 400);
+    }
+  }
+
+
+  public function editMenu(Request $request) {
+    $this->validate($request, [
+        'menu_name' => 'required',
+        'menu_description' => 'required',
+        'menu_price' => 'required',
+        'menu_availability' => 'required',
+    ]);
+    if($request->hasFile('menu_picture')) {
+      $resource = $request->file('menu_picture');
+      $name = Carbon::now()->timestamp."_".$resource->getClientOriginalName();
+      $userId = Auth::user()->id;
+      $url = "/storage/menu_picture/".$userId."/".$name;
+      $resource->move(\base_path() ."/public/storage/menu_picture/".$userId, $name);
+
+      $theMenu = RestaurantMenu::findOrFail($request->menu_id);
+      $theMenu->menu_name = $request->menu_name;
+      $theMenu->menu_description = $request->menu_description;
+      $theMenu->menu_price = $request->menu_price;
+      $theMenu->menu_availability = $request->menu_availability;
+      $theMenu->menu_picture = $url;
+      $theMenu->save();
+
+      return response()->json([
+        'status' => 'success',
+        'message' => 'Menu Edited Successfully'
+      ], 200);
+    } else {
+      $theMenu = RestaurantMenu::findOrFail($request->menu_id);
+      $theMenu->menu_name = $request->menu_name;
+      $theMenu->menu_description = $request->menu_description;
+      $theMenu->menu_price = $request->menu_price;
+      $theMenu->menu_availability = $request->menu_availability;
+      $theMenu->save();
+
+      return response()->json([
+        'status' => 'success',
+        'message' => 'Menu Edited Successfully'
+      ], 200);
     }
   }
 }

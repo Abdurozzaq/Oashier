@@ -50,7 +50,9 @@ Route::group([
 
 Route::get('data', 'Api\RestaurantMenu\RestaurantMenuController@test')->middleware('jwt.verify');
 Route::get('menu/list', 'Api\RestaurantMenu\RestaurantMenuController@showMenu')->middleware('jwt.verify');
+Route::post('menu/get', 'Api\RestaurantMenu\RestaurantMenuController@getMenu')->middleware('jwt.verify');
 Route::post('menu/create', 'Api\RestaurantMenu\RestaurantMenuController@createMenu')->middleware('jwt.verify');
 Route::post('menu/delete', 'Api\RestaurantMenu\RestaurantMenuController@deleteMenu')->middleware('jwt.verify');
+Route::post('menu/edit', 'Api\RestaurantMenu\RestaurantMenuController@editMenu')->middleware('jwt.verify');
 
 

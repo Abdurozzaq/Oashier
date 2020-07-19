@@ -18,6 +18,7 @@ import LandingPage from "./pages/LandingPage.vue"
 import CashierHomePage from "./pages/cashier/HomePage.vue"
 import CreateMenuPage from "./pages/cashier/menu/CreateMenu.vue"
 import MenuListPage from "./pages/cashier/menu/MenuList.vue"
+import EditMenuPage from "./pages/cashier/menu/EditMenu.vue"
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -188,6 +189,14 @@ export const routes = [
                 component: MenuListPage,
                 meta: {
                     title: 'Menu List - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "menu/edit",
+                component: EditMenuPage,
+                meta: {
+                    title: 'Edit Menu - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
             }

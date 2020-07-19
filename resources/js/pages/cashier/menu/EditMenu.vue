@@ -6,7 +6,7 @@
         cols="12"
         
       >
-        <v-form @submit.prevent="createMenu">
+        <v-form @submit.prevent="editMenu">
           <v-card
             class=" mx-auto"
             color="#26c6da"
@@ -20,7 +20,7 @@
               >
                 mdi-food-fork-drink
               </v-icon>
-              <span color="white" class="title white--text">Create Menu</span>
+              <span color="white" class="title white--text">Edit Menu</span>
             </v-card-title>
             
               <v-card-text class="headline font-weight-bold">
@@ -89,9 +89,6 @@
                       accept="image/*" 
                       label="Menu Picture"
                       v-model="menu_picture"
-                      :error-messages="menuPictureErrors"
-                      @change="$v.menu_picture.$touch()" 
-                      @blur="$v.menu_picture.$touch()"
                       ></v-file-input>
                   </v-col>
 
@@ -130,7 +127,7 @@
       :timeout="5000"
       color="success"
     >
-      Menu has been created successfully.
+      Menu has been edited successfully.
       <v-btn
         color="white"
         text
@@ -177,6 +174,7 @@
         menu_availability: null,
         menu_picture: null,
         image: null,
+        menu_id: null,
 
         // Response
         errorAlert: false,
@@ -201,9 +199,6 @@
       },
       menu_availability: { 
         required 
-      },
-      menu_picture: {
-        required
       },
     }, // end of validations
 
@@ -237,18 +232,11 @@
         !currentObj.$v.menu_availability.required && errors.push('Menu availability is required.')
         return errors
       },
-      menuPictureErrors () {
-        let currentObj = this
-        const errors = []
-        if (!currentObj.$v.menu_picture.$dirty) return errors
-        !currentObj.$v.menu_picture.required && errors.push('Menu picture is required.')
-        return errors
-      },
     },
 
     methods: {
 
-      createMenu: function() {
+      editMenu: function() {
 
         let currentObj = this
 
@@ -263,15 +251,18 @@
           let formData = new FormData();
 
           // files
-          formData.append("menu_picture", currentObj.menu_picture)
-
+          if(currentObj.menu_picture) {
+            formData.append("menu_picture", currentObj.menu_picture)
+          }
+      
           // additional data
+          formData.append("menu_id", currentObj.menu_id)
           formData.append("menu_name", currentObj.menu_name)
           formData.append("menu_description", currentObj.menu_description)
           formData.append("menu_price", currentObj.menu_price)
           formData.append("menu_availability", currentObj.menu_availability)
 
-          axios.post('api/menu/create', formData)
+          axios.post('api/menu/edit', formData)
             .then(function (response) {
 
               // after success show successSnackbar
@@ -291,6 +282,32 @@
             })
         }
       },
+
+      getOldData: function () {
+        let currentObj = this
+        axios.post('api/menu/get', {
+          menuId: currentObj.$route.query.menuId
+        })
+          .then(function (response) {
+            currentObj.menu_id = response.data.data.id
+            currentObj.menu_name = response.data.data.menu_name
+            currentObj.menu_description = response.data.data.menu_description
+            currentObj.menu_price = response.data.data.menu_price
+            currentObj.menu_availability = response.data.data.menu_availability
+            console.log('success get old data')
+          })
+          .catch(function (error) {
+            console.log(error.response.data)
+          })
+
+      }
+    }, // end of methods
+
+    
+
+    mounted: function() {
+      let currentObj = this
+      currentObj.getOldData()
     }
 
   }

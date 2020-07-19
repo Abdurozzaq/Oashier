@@ -8,6 +8,10 @@
       >
         <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">Your Menu :</div>
 
+        <v-banner v-if="menuList == null || menuList.length == 0">
+          You haven't created any menu at this time, make it by clicking on <a href="/home/menu/create">this.</a>
+        </v-banner>
+
         <v-alert
           v-model="errorAlert"
           border="top"
@@ -174,7 +178,7 @@
 
       toMenuEdit: function(menuId) {
         let currentObj = this
-        currentObj.$router.push({ path: '/home/menu/edit', query: { uid: menuId }})
+        currentObj.$router.push({ path: '/home/menu/edit', query: { menuId: menuId }})
       },
 
       deleteMenu: function(menuId) {
@@ -188,6 +192,7 @@
             // after success show successSnackbar
             currentObj.successDeleteSnackbar = true
             currentObj.overlay = false
+            currentObj.getMenu()
             
           })
           .catch(function (error) {
@@ -204,8 +209,8 @@
         axios.get('api/menu/list')
           .then(function (response) {
 
-            currentObj.menuList = response.data.menu
-            currentObj.getMenu()
+            currentObj.menuList = response.data.menu || null
+            console.log(response.data)
             // after success show successSnackbar
             currentObj.successSnackbar = true
 
