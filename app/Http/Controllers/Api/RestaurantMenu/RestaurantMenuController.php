@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class RestaurantMenuController extends Controller
 {
   public function test() {
-    $data = RestaurantMenu::with('stockMenu')->get();
+    $data = RestaurantMenu::get();
 
     return response()->json([
         'status' => 'success',
@@ -20,7 +20,7 @@ class RestaurantMenuController extends Controller
   }
 
   public function showMenu() {
-    $data = RestaurantMenu::where('user_id', Auth::user()->id)->with('stockMenu')->get();
+    $data = RestaurantMenu::where('user_id', Auth::user()->id)->get();
 
     return response()->json([
       'status' => 'success',
@@ -65,15 +65,28 @@ class RestaurantMenuController extends Controller
       $userId = Auth::user()->id;
       $url = "/storage/menu_picture/".$userId."/".$name;
       $resource->move(\base_path() ."/public/storage/menu_picture/".$userId, $name);
-
-      RestaurantMenu::create([
-        'user_id' => Auth::user()->id,
-        'menu_name' => $request->menu_name,
-        'menu_description' => $request->menu_description,
-        'menu_price' => $request->menu_price,
-        'menu_availability' => $request->menu_availability,
-        'menu_picture' => $url
-      ]);
+      
+      if ($request->menu_stock_qty) {
+        RestaurantMenu::create([
+          'user_id' => Auth::user()->id,
+          'menu_name' => $request->menu_name,
+          'menu_description' => $request->menu_description,
+          'menu_price' => $request->menu_price,
+          'menu_availability' => $request->menu_availability,
+          'menu_picture' => $url,
+          'menu_stock_qty' => $request->menu_stock_qty
+        ]);
+      } else {
+        RestaurantMenu::create([
+          'user_id' => Auth::user()->id,
+          'menu_name' => $request->menu_name,
+          'menu_description' => $request->menu_description,
+          'menu_price' => $request->menu_price,
+          'menu_availability' => $request->menu_availability,
+          'menu_picture' => $url
+        ]);
+      }
+      
 
       return response()->json([
         'status' => 'success',
@@ -128,4 +141,21 @@ class RestaurantMenuController extends Controller
       ], 200);
     }
   }
+
+  public function editStockQty(Request $request) {
+    $this->validate($request, [
+      'menu_stock_qty' => 'required',
+    ]);
+  
+    $menu = RestaurantMenu::findOrFail($request->menu_id);
+    $menu->menu_stock_qty = $request->menu_stock_qty;
+    $menu->save();
+  
+    return response()->json([
+      'status' => 'success',
+      'message' => 'Menu Stock Quantity Edited Successfully'
+    ], 200);
+  }
+  
 }
+

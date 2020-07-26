@@ -3795,6 +3795,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3809,6 +3821,7 @@ __webpack_require__.r(__webpack_exports__);
       menu_price: null,
       menu_availability: null,
       menu_picture: null,
+      menu_stock_qty: null,
       image: null,
       // Response
       errorAlert: false,
@@ -3836,6 +3849,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     menu_picture: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    menu_stock_qty: {
+      numeric: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["numeric"]
     }
   },
   // end of validations
@@ -3875,6 +3891,13 @@ __webpack_require__.r(__webpack_exports__);
       if (!currentObj.$v.menu_picture.$dirty) return errors;
       !currentObj.$v.menu_picture.required && errors.push('Menu picture is required.');
       return errors;
+    },
+    menuStockQtyErrors: function menuStockQtyErrors() {
+      var currentObj = this;
+      var errors = [];
+      if (!currentObj.$v.menu_stock_qty.$dirty) return errors;
+      !currentObj.$v.menu_stock_qty.numeric && errors.push('Menu Stock Quantity must be an numeric.');
+      return errors;
     }
   },
   methods: {
@@ -3894,12 +3917,19 @@ __webpack_require__.r(__webpack_exports__);
         formData.append("menu_name", currentObj.menu_name);
         formData.append("menu_description", currentObj.menu_description);
         formData.append("menu_price", currentObj.menu_price);
-        formData.append("menu_availability", currentObj.menu_availability);
+        formData.append("menu_availability", currentObj.menu_availability); // check if stock qty true or not null
+
+        if (currentObj.menu_stock_qty) {
+          // then, add it to context
+          formData.append("menu_stock_qty", currentObj.menu_stock_qty);
+        }
+
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('api/menu/create', formData).then(function (response) {
           // after success show successSnackbar
           currentObj.successSnackbar = true;
           currentObj.overlay = false;
           currentObj.$v.$reset();
+          currentObj.$router.push('/home/menu/list');
         })["catch"](function (error) {
           currentObj.overlay = false;
 
@@ -4184,6 +4214,7 @@ __webpack_require__.r(__webpack_exports__);
           currentObj.successSnackbar = true;
           currentObj.overlay = false;
           currentObj.$v.$reset();
+          currentObj.$router.push('/home/menu/list');
         })["catch"](function (error) {
           currentObj.overlay = false;
 
@@ -4396,6 +4427,184 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4403,6 +4612,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       dialog: false,
+      stockDialog: false,
       menu_activate: ['Yes', 'No'],
       // Search
       searchValue: null,
@@ -4412,7 +4622,12 @@ __webpack_require__.r(__webpack_exports__);
       menu_price: null,
       menu_availability: null,
       menu_picture: null,
+      menu_stock_qty: null,
       menuList: null,
+      activatedMenu: null,
+      deactivatedMenu: null,
+      // dynamic var for edit stock
+      menu_id: null,
       // Response
       errorAlert: false,
       successSnackbar: false,
@@ -4420,11 +4635,63 @@ __webpack_require__.r(__webpack_exports__);
       serverError: null,
       errorSnackbar: false,
       successDeleteSnackbar: false,
-      overlay: false
+      successEditStockSnackbar: false,
+      overlay: false,
+      overlayStock: false
     };
   },
   // end of data()
+  validations: {
+    menu_stock_qty: {
+      numeric: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["numeric"],
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    }
+  },
+  computed: {
+    menuStockQtyErrors: function menuStockQtyErrors() {
+      var currentObj = this;
+      var errors = [];
+      if (!currentObj.$v.menu_stock_qty.$dirty) return errors;
+      !currentObj.$v.menu_stock_qty.numeric && errors.push('Menu Stock Quantity must be an numeric.');
+      !currentObj.$v.menu_stock_qty.required && errors.push('Menu Stock Quantity is required.');
+      return errors;
+    }
+  },
   methods: {
+    stockPrepare: function stockPrepare(menuId) {
+      var currentObj = this;
+      currentObj.menu_id = menuId;
+      currentObj.stockDialog = true;
+    },
+    stockCleanUpVar: function stockCleanUpVar(menuId) {
+      var currentObj = this;
+      currentObj.menu_id = null;
+      currentObj.stockDialog = false;
+    },
+    editStock: function editStock() {
+      var currentObj = this;
+      currentObj.overlayStock = true;
+
+      if (currentObj.$v.$invalid) {
+        currentObj.errorSnackbar = true;
+      } else {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('api/menu/stock/edit', {
+          menu_id: currentObj.menu_id,
+          menu_stock_qty: currentObj.menu_stock_qty
+        }).then(function (response) {
+          // after success show successSnackbar
+          currentObj.successEditStockSnackbar = true;
+          currentObj.overlayStock = false;
+          currentObj.stockCleanUpVar();
+          currentObj.getMenu();
+        })["catch"](function (error) {
+          if (error.response) {
+            currentObj.serverError = error.response.data.errors;
+            currentObj.errorAlert = true;
+          }
+        });
+      }
+    },
     toMenuEdit: function toMenuEdit(menuId) {
       var currentObj = this;
       currentObj.$router.push({
@@ -4451,13 +4718,26 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
+    filterActiveMenu: function filterActiveMenu() {
+      var currentObj = this;
+      currentObj.activatedMenu = currentObj.menuList.filter(function (menu) {
+        return menu.menu_availability === 'Yes';
+      });
+    },
+    filterNotActiveMenu: function filterNotActiveMenu() {
+      var currentObj = this;
+      currentObj.deactivatedMenu = currentObj.menuList.filter(function (menu) {
+        return menu.menu_availability === 'No';
+      });
+    },
     getMenu: function getMenu() {
       var currentObj = this;
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('api/menu/list').then(function (response) {
-        currentObj.menuList = response.data.menu || null;
-        console.log(response.data); // after success show successSnackbar
+        currentObj.menuList = response.data.menu || null; // after success show successSnackbar
 
         currentObj.successSnackbar = true;
+        currentObj.filterActiveMenu();
+        currentObj.filterNotActiveMenu();
       });
     },
     search: function search() {
@@ -6849,6 +7129,7 @@ var render = function() {
       _vm._v(" "),
       _c(
         "v-main",
+        { staticClass: "blue-grey lighten-5" },
         [_c("v-container", { attrs: { fluid: "" } }, [_c("router-view")], 1)],
         1
       )
@@ -8725,6 +9006,36 @@ var render = function() {
                                       },
                                       expression: "menu_picture"
                                     }
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    { staticClass: "text-caption mb-1" },
+                                    [_vm._v("Optional")]
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      label: "Set Initial Stock Quantity",
+                                      "single-line": "",
+                                      solo: "",
+                                      "error-messages": _vm.menuStockQtyErrors
+                                    },
+                                    on: {
+                                      input: function($event) {
+                                        return _vm.$v.menu_stock_qty.$touch()
+                                      },
+                                      blur: function($event) {
+                                        return _vm.$v.menu_stock_qty.$touch()
+                                      }
+                                    },
+                                    model: {
+                                      value: _vm.menu_stock_qty,
+                                      callback: function($$v) {
+                                        _vm.menu_stock_qty = $$v
+                                      },
+                                      expression: "menu_stock_qty"
+                                    }
                                   })
                                 ],
                                 1
@@ -9271,6 +9582,21 @@ var render = function() {
                 }
               }),
               _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  staticClass: "mb-5",
+                  attrs: { small: "" },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.getMenu($event)
+                    }
+                  }
+                },
+                [_vm._v("\n        Reload Data\n      ")]
+              ),
+              _vm._v(" "),
               _vm.menuList == null || _vm.menuList.length == 0
                 ? _c("v-banner", [
                     _vm._v(
@@ -9311,25 +9637,12 @@ var render = function() {
                 0
               ),
               _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  staticClass: "mb-5",
-                  attrs: { small: "" },
-                  on: {
-                    click: function($event) {
-                      $event.preventDefault()
-                      return _vm.getMenu($event)
-                    }
-                  }
-                },
-                [_vm._v("\n        Reload Data\n      ")]
-              ),
+              _c("div", { staticClass: "text-h6" }, [_vm._v("Activated Menu")]),
               _vm._v(" "),
-              _vm._l(_vm.menuList, function(menu, index) {
+              _vm._l(_vm.activatedMenu, function(ma, index) {
                 return _c(
                   "v-card",
-                  { key: index, staticClass: "mb-3" },
+                  { key: "ma" + index, staticClass: "mb-3" },
                   [
                     _c(
                       "v-list",
@@ -9347,7 +9660,7 @@ var render = function() {
                                   { attrs: { size: "62", color: "primary" } },
                                   [
                                     _c("v-img", {
-                                      attrs: { src: menu.menu_picture }
+                                      attrs: { src: ma.menu_picture }
                                     })
                                   ],
                                   1
@@ -9360,11 +9673,11 @@ var render = function() {
                               "v-list-item-content",
                               [
                                 _c("v-list-item-title", [
-                                  _vm._v(_vm._s(menu.menu_name))
+                                  _vm._v(_vm._s(ma.menu_name))
                                 ]),
                                 _vm._v(" "),
                                 _c("v-list-item-subtitle", [
-                                  _vm._v("Rp" + _vm._s(menu.menu_price))
+                                  _vm._v("Rp" + _vm._s(ma.menu_price))
                                 ])
                               ],
                               1
@@ -9397,7 +9710,7 @@ var render = function() {
                                                         ) {
                                                           $event.preventDefault()
                                                           return _vm.toMenuEdit(
-                                                            menu.id
+                                                            ma.id
                                                           )
                                                         }
                                                       }
@@ -9467,9 +9780,366 @@ var render = function() {
                                                         click: function(
                                                           $event
                                                         ) {
+                                                          return _vm.stockPrepare(
+                                                            ma.id
+                                                          )
+                                                        }
+                                                      }
+                                                    },
+                                                    "v-btn",
+                                                    attrs,
+                                                    false
+                                                  ),
+                                                  on
+                                                ),
+                                                [
+                                                  _c(
+                                                    "v-icon",
+                                                    {
+                                                      attrs: {
+                                                        color: "grey lighten-1"
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        "mdi-circle-edit-outline"
+                                                      )
+                                                    ]
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      null,
+                                      true
+                                    )
+                                  },
+                                  [
+                                    _vm._v(" "),
+                                    _c("span", [_vm._v("Edit Menu Stock")])
+                                  ]
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-list-item-action",
+                              [
+                                _c(
+                                  "v-tooltip",
+                                  {
+                                    attrs: { bottom: "" },
+                                    scopedSlots: _vm._u(
+                                      [
+                                        {
+                                          key: "activator",
+                                          fn: function(ref) {
+                                            var on = ref.on
+                                            var attrs = ref.attrs
+                                            return [
+                                              _c(
+                                                "v-btn",
+                                                _vm._g(
+                                                  _vm._b(
+                                                    {
+                                                      attrs: { icon: "" },
+                                                      on: {
+                                                        click: function(
+                                                          $event
+                                                        ) {
                                                           $event.preventDefault()
                                                           return _vm.deleteMenu(
-                                                            menu.id
+                                                            ma.id
+                                                          )
+                                                        }
+                                                      }
+                                                    },
+                                                    "v-btn",
+                                                    attrs,
+                                                    false
+                                                  ),
+                                                  on
+                                                ),
+                                                [
+                                                  _c(
+                                                    "v-icon",
+                                                    {
+                                                      attrs: {
+                                                        color: "grey lighten-1"
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        "mdi-delete-outline"
+                                                      )
+                                                    ]
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      null,
+                                      true
+                                    )
+                                  },
+                                  [
+                                    _vm._v(" "),
+                                    _c("span", [_vm._v("Delete Menu")])
+                                  ]
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-overlay",
+                      { attrs: { absolute: true, value: _vm.overlay } },
+                      [
+                        _c("v-progress-circular", {
+                          attrs: { size: 50, color: "white", indeterminate: "" }
+                        })
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              }),
+              _vm._v(" "),
+              _c("br"),
+              _vm._v(" "),
+              _c("div", { staticClass: "text-h6" }, [
+                _vm._v("Deactivated Menu")
+              ]),
+              _vm._v(" "),
+              _vm._l(_vm.deactivatedMenu, function(md, index) {
+                return _c(
+                  "v-card",
+                  { key: "md" + index, staticClass: "mb-3" },
+                  [
+                    _c(
+                      "v-list",
+                      [
+                        _c(
+                          "v-list-item",
+                          { attrs: { color: "#B3E5F" } },
+                          [
+                            _c(
+                              "v-list-item-avatar",
+                              { attrs: { size: "62" } },
+                              [
+                                _c(
+                                  "v-avatar",
+                                  { attrs: { size: "62", color: "primary" } },
+                                  [
+                                    _c("v-img", {
+                                      attrs: { src: md.menu_picture }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-list-item-content",
+                              [
+                                _c("v-list-item-title", [
+                                  _vm._v(_vm._s(md.menu_name))
+                                ]),
+                                _vm._v(" "),
+                                _c("v-list-item-subtitle", [
+                                  _vm._v("Rp" + _vm._s(md.menu_price))
+                                ])
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-list-item-action",
+                              [
+                                _c(
+                                  "v-tooltip",
+                                  {
+                                    attrs: { bottom: "" },
+                                    scopedSlots: _vm._u(
+                                      [
+                                        {
+                                          key: "activator",
+                                          fn: function(ref) {
+                                            var on = ref.on
+                                            var attrs = ref.attrs
+                                            return [
+                                              _c(
+                                                "v-btn",
+                                                _vm._g(
+                                                  _vm._b(
+                                                    {
+                                                      attrs: { icon: "" },
+                                                      on: {
+                                                        click: function(
+                                                          $event
+                                                        ) {
+                                                          $event.preventDefault()
+                                                          return _vm.toMenuEdit(
+                                                            md.id
+                                                          )
+                                                        }
+                                                      }
+                                                    },
+                                                    "v-btn",
+                                                    attrs,
+                                                    false
+                                                  ),
+                                                  on
+                                                ),
+                                                [
+                                                  _c(
+                                                    "v-icon",
+                                                    {
+                                                      attrs: {
+                                                        color: "grey lighten-1"
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        "mdi-file-document-edit-outline"
+                                                      )
+                                                    ]
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      null,
+                                      true
+                                    )
+                                  },
+                                  [
+                                    _vm._v(" "),
+                                    _c("span", [_vm._v("Edit Menu")])
+                                  ]
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-list-item-action",
+                              [
+                                _c(
+                                  "v-tooltip",
+                                  {
+                                    attrs: { bottom: "" },
+                                    scopedSlots: _vm._u(
+                                      [
+                                        {
+                                          key: "activator",
+                                          fn: function(ref) {
+                                            var on = ref.on
+                                            var attrs = ref.attrs
+                                            return [
+                                              _c(
+                                                "v-btn",
+                                                _vm._g(
+                                                  _vm._b(
+                                                    {
+                                                      attrs: { icon: "" },
+                                                      on: {
+                                                        click: function(
+                                                          $event
+                                                        ) {
+                                                          return _vm.stockPrepare(
+                                                            md.id
+                                                          )
+                                                        }
+                                                      }
+                                                    },
+                                                    "v-btn",
+                                                    attrs,
+                                                    false
+                                                  ),
+                                                  on
+                                                ),
+                                                [
+                                                  _c(
+                                                    "v-icon",
+                                                    {
+                                                      attrs: {
+                                                        color: "grey lighten-1"
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        "mdi-circle-edit-outline"
+                                                      )
+                                                    ]
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      null,
+                                      true
+                                    )
+                                  },
+                                  [
+                                    _vm._v(" "),
+                                    _c("span", [_vm._v("Edit Menu Stock")])
+                                  ]
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-list-item-action",
+                              [
+                                _c(
+                                  "v-tooltip",
+                                  {
+                                    attrs: { bottom: "" },
+                                    scopedSlots: _vm._u(
+                                      [
+                                        {
+                                          key: "activator",
+                                          fn: function(ref) {
+                                            var on = ref.on
+                                            var attrs = ref.attrs
+                                            return [
+                                              _c(
+                                                "v-btn",
+                                                _vm._g(
+                                                  _vm._b(
+                                                    {
+                                                      attrs: { icon: "" },
+                                                      on: {
+                                                        click: function(
+                                                          $event
+                                                        ) {
+                                                          $event.preventDefault()
+                                                          return _vm.deleteMenu(
+                                                            md.id
                                                           )
                                                         }
                                                       }
@@ -9536,6 +10206,112 @@ var render = function() {
               })
             ],
             2
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "500", persistent: "" },
+          model: {
+            value: _vm.stockDialog,
+            callback: function($$v) {
+              _vm.stockDialog = $$v
+            },
+            expression: "stockDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-overlay",
+                { attrs: { absolute: true, value: _vm.overlayStock } },
+                [
+                  _c("v-progress-circular", {
+                    attrs: { size: 50, color: "white", indeterminate: "" }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-card-title", { staticClass: "headline grey lighten-2" }, [
+                _vm._v("\n        Edit Your Menu Stock Here.\n      ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-text",
+                [
+                  _c("br"),
+                  _vm._v(" "),
+                  _c("v-text-field", {
+                    attrs: {
+                      label: "Stock Quantity",
+                      filled: "",
+                      "error-messages": _vm.menuStockQtyErrors
+                    },
+                    on: {
+                      input: function($event) {
+                        return _vm.$v.menu_stock_qty.$touch()
+                      },
+                      blur: function($event) {
+                        return _vm.$v.menu_stock_qty.$touch()
+                      }
+                    },
+                    model: {
+                      value: _vm.menu_stock_qty,
+                      callback: function($$v) {
+                        _vm.menu_stock_qty = $$v
+                      },
+                      expression: "menu_stock_qty"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.stockCleanUpVar()
+                        }
+                      }
+                    },
+                    [_vm._v("\n          Cancel\n        ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.editStock()
+                        }
+                      }
+                    },
+                    [_vm._v("\n          Send\n        ")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
           )
         ],
         1
@@ -9626,6 +10402,38 @@ var render = function() {
               on: {
                 click: function($event) {
                   _vm.successDeleteSnackbar = false
+                }
+              }
+            },
+            [_vm._v("\n      Close\n    ")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: { timeout: 5000, color: "success" },
+          model: {
+            value: _vm.successEditStockSnackbar,
+            callback: function($$v) {
+              _vm.successEditStockSnackbar = $$v
+            },
+            expression: "successEditStockSnackbar"
+          }
+        },
+        [
+          _vm._v(
+            "\n    Menu Stock Quantity has been Edited successfully from database.\n    "
+          ),
+          _c(
+            "v-btn",
+            {
+              attrs: { color: "white", text: "" },
+              on: {
+                click: function($event) {
+                  _vm.successEditStockSnackbar = false
                 }
               }
             },

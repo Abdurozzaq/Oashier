@@ -4,7 +4,6 @@
     <v-row justify="start" class="mx-auto">
       <v-col
         cols="12"
-        
       >
         <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">Your Menu :</div>
 
@@ -18,6 +17,14 @@
           max-width="64px"
           class="mb-1"
         ></v-text-field>
+
+        <v-btn 
+          small
+          @click.prevent="getMenu"
+          class="mb-5"
+        >
+          Reload Data
+        </v-btn>
 
         <v-banner v-if="menuList == null || menuList.length == 0">
           You haven't created any menu at this time, make it by clicking on <a href="/home/menu/create">this.</a>
@@ -37,27 +44,21 @@
           </ul>
         </v-alert>
 
-        <v-btn 
-          small
-          @click.prevent="getMenu"
-          class="mb-5"
-        >
-          Reload Data
-        </v-btn>
+        <div class="text-h6">Activated Menu</div>
 
-        <v-card class="mb-3" v-for="(menu, index) in menuList" :key="index">
+        <v-card class="mb-3" v-for="(ma, index) in activatedMenu" :key="'ma' + index">
           <v-list>
             
             <v-list-item color="#B3E5F">
               <v-list-item-avatar size="62">
                 <v-avatar size="62" color="primary">
-                  <v-img :src="menu.menu_picture"/>
+                  <v-img :src="ma.menu_picture"/>
                 </v-avatar>
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title>{{ menu.menu_name }}</v-list-item-title>
-                <v-list-item-subtitle>Rp{{ menu.menu_price }}</v-list-item-subtitle>
+                <v-list-item-title>{{ ma.menu_name }}</v-list-item-title>
+                <v-list-item-subtitle>Rp{{ ma.menu_price }}</v-list-item-subtitle>
               </v-list-item-content>
 
               <v-list-item-action>
@@ -68,7 +69,7 @@
                       icon
                       v-bind="attrs"
                       v-on="on"
-                      @click.prevent="toMenuEdit(menu.id)"
+                      @click.prevent="toMenuEdit(ma.id)"
                     >
                       <v-icon color="grey lighten-1">mdi-file-document-edit-outline</v-icon>
                     </v-btn>
@@ -86,7 +87,114 @@
                       icon
                       v-bind="attrs"
                       v-on="on"
-                      @click.prevent="deleteMenu(menu.id)"
+                      @click="stockPrepare(ma.id)"
+                    >
+                      <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit Menu Stock</span>
+                </v-tooltip>
+
+              </v-list-item-action>
+
+              <v-list-item-action>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn  
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click.prevent="deleteMenu(ma.id)"
+                    >
+                      <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Delete Menu</span>
+                </v-tooltip>
+
+              </v-list-item-action>
+
+              
+            </v-list-item>
+          </v-list>
+            
+          <v-overlay
+            :absolute="true"
+            :value="overlay"
+          >
+            <v-progress-circular
+              :size="50"
+              color="white"
+              indeterminate
+            ></v-progress-circular>
+          </v-overlay>
+        </v-card>
+
+        <br>
+
+        <div class="text-h6">Deactivated Menu</div>
+
+        <v-card class="mb-3" v-for="(md, index) in deactivatedMenu" :key="'md' + index">
+          <v-list>
+            
+            <v-list-item color="#B3E5F">
+              <v-list-item-avatar size="62">
+                <v-avatar size="62" color="primary">
+                  <v-img :src="md.menu_picture"/>
+                </v-avatar>
+              </v-list-item-avatar>
+
+              <v-list-item-content>
+                <v-list-item-title>{{ md.menu_name }}</v-list-item-title>
+                <v-list-item-subtitle>Rp{{ md.menu_price }}</v-list-item-subtitle>
+              </v-list-item-content>
+
+              <v-list-item-action>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn  
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click.prevent="toMenuEdit(md.id)"
+                    >
+                      <v-icon color="grey lighten-1">mdi-file-document-edit-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit Menu</span>
+                </v-tooltip>
+                
+              </v-list-item-action>
+
+              <v-list-item-action>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn  
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="stockPrepare(md.id)"
+                    >
+                      <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit Menu Stock</span>
+                </v-tooltip>
+
+              </v-list-item-action>
+
+              <v-list-item-action>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn  
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click.prevent="deleteMenu(md.id)"
                     >
                       <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
                     </v-btn>
@@ -113,6 +221,61 @@
         
       </v-col>
     </v-row>
+
+    <v-dialog
+      v-model="stockDialog"
+      width="500"
+      persistent
+    >
+      <v-card>
+        <v-overlay
+          :absolute="true"
+          :value="overlayStock"
+        >
+          <v-progress-circular
+            :size="50"
+            color="white"
+            indeterminate
+          ></v-progress-circular>
+        </v-overlay>
+
+        <v-card-title class="headline grey lighten-2">
+          Edit Your Menu Stock Here.
+        </v-card-title>
+
+        <v-card-text>
+          <br>
+          <v-text-field
+            label="Stock Quantity"
+            filled
+            v-model="menu_stock_qty"
+            :error-messages="menuStockQtyErrors"
+            @input="$v.menu_stock_qty.$touch()" 
+            @blur="$v.menu_stock_qty.$touch()"
+          ></v-text-field>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click.prevent="stockCleanUpVar()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click.prevent="editStock()"
+          >
+            Send
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
 
     <v-snackbar
@@ -159,6 +322,21 @@
         Close
       </v-btn>
     </v-snackbar>
+
+    <v-snackbar
+      v-model="successEditStockSnackbar"
+      :timeout="5000"
+      color="success"
+    >
+      Menu Stock Quantity has been Edited successfully from database.
+      <v-btn
+        color="white"
+        text
+        @click="successEditStockSnackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -170,6 +348,7 @@
     data() {
       return {
         dialog: false,
+        stockDialog: false,
         menu_activate: [
           'Yes',
           'No'
@@ -184,8 +363,14 @@
         menu_price: null,
         menu_availability: null,
         menu_picture: null,
+        menu_stock_qty: null,
 
         menuList: null,
+        activatedMenu: null,
+        deactivatedMenu: null,
+
+        // dynamic var for edit stock
+        menu_id: null,
 
         // Response
         errorAlert: false,
@@ -194,12 +379,76 @@
         serverError: null,
         errorSnackbar: false,
         successDeleteSnackbar: false,
+        successEditStockSnackbar: false,
         overlay: false,
+        overlayStock: false,
       }
     }, // end of data()
 
+    validations: {
+      menu_stock_qty: {
+        numeric,
+        required
+      },
+    },
+
+    computed: {
+      menuStockQtyErrors () {
+        let currentObj = this
+        const errors = []
+        if (!currentObj.$v.menu_stock_qty.$dirty) return errors
+        !currentObj.$v.menu_stock_qty.numeric && errors.push('Menu Stock Quantity must be an numeric.')
+        !currentObj.$v.menu_stock_qty.required && errors.push('Menu Stock Quantity is required.')
+        return errors
+      },
+    },
 
     methods: {
+
+      stockPrepare: function(menuId) {
+        let currentObj = this
+
+        currentObj.menu_id = menuId
+        currentObj.stockDialog = true
+      },
+
+      stockCleanUpVar: function(menuId) {
+        let currentObj = this
+
+        currentObj.menu_id = null
+        currentObj.stockDialog = false
+      },
+
+      editStock: function() {
+        let currentObj = this
+        
+        currentObj.overlayStock = true
+        if (currentObj.$v.$invalid) {
+          currentObj.errorSnackbar = true
+        } else {
+          axios.post('api/menu/stock/edit', {
+            menu_id: currentObj.menu_id,
+            menu_stock_qty: currentObj.menu_stock_qty
+          })
+            .then(function (response) {
+              // after success show successSnackbar
+              currentObj.successEditStockSnackbar = true
+              currentObj.overlayStock = false
+              currentObj.stockCleanUpVar()
+              currentObj.getMenu()
+
+
+              
+            })
+            .catch(function (error) {
+              if(error.response) {
+                currentObj.serverError = error.response.data.errors
+                currentObj.errorAlert = true
+              }
+            })
+        }
+
+      },
 
       toMenuEdit: function(menuId) {
         let currentObj = this
@@ -229,16 +478,29 @@
 
       },     
 
+      filterActiveMenu: function() {
+        let currentObj = this
+
+        currentObj.activatedMenu = currentObj.menuList.filter(menu => menu.menu_availability === 'Yes')
+      },
+
+      filterNotActiveMenu: function() {
+        let currentObj = this
+
+        currentObj.deactivatedMenu = currentObj.menuList.filter(menu => menu.menu_availability === 'No')
+      },
+
       getMenu: function() {
         let currentObj = this
         axios.get('api/menu/list')
           .then(function (response) {
 
             currentObj.menuList = response.data.menu || null
-            console.log(response.data)
             // after success show successSnackbar
             currentObj.successSnackbar = true
 
+            currentObj.filterActiveMenu()
+            currentObj.filterNotActiveMenu()
           })
       },
 

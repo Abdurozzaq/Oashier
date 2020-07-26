@@ -54,5 +54,6 @@ Route::post('menu/get', 'Api\RestaurantMenu\RestaurantMenuController@getMenu')->
 Route::post('menu/create', 'Api\RestaurantMenu\RestaurantMenuController@createMenu')->middleware('jwt.verify');
 Route::post('menu/delete', 'Api\RestaurantMenu\RestaurantMenuController@deleteMenu')->middleware('jwt.verify');
 Route::post('menu/edit', 'Api\RestaurantMenu\RestaurantMenuController@editMenu')->middleware('jwt.verify');
+Route::post('menu/stock/edit', 'Api\RestaurantMenu\RestaurantMenuController@editStockQty')->middleware('jwt.verify');
 
 

@@ -93,6 +93,18 @@
                       @change="$v.menu_picture.$touch()" 
                       @blur="$v.menu_picture.$touch()"
                       ></v-file-input>
+
+                      <div class="text-caption mb-1">Optional</div>
+
+                      <v-text-field
+                      label="Set Initial Stock Quantity"
+                      single-line
+                      solo
+                      v-model="menu_stock_qty"
+                      :error-messages="menuStockQtyErrors"
+                      @input="$v.menu_stock_qty.$touch()" 
+                      @blur="$v.menu_stock_qty.$touch()"
+                    ></v-text-field>
                   </v-col>
 
                 </v-row>
@@ -176,6 +188,7 @@
         menu_price: null,
         menu_availability: null,
         menu_picture: null,
+        menu_stock_qty: null,
         image: null,
 
         // Response
@@ -204,6 +217,9 @@
       },
       menu_picture: {
         required
+      },
+      menu_stock_qty: {
+        numeric
       },
     }, // end of validations
 
@@ -244,6 +260,13 @@
         !currentObj.$v.menu_picture.required && errors.push('Menu picture is required.')
         return errors
       },
+      menuStockQtyErrors () {
+        let currentObj = this
+        const errors = []
+        if (!currentObj.$v.menu_stock_qty.$dirty) return errors
+        !currentObj.$v.menu_stock_qty.numeric && errors.push('Menu Stock Quantity must be an numeric.')
+        return errors
+      },
     },
 
     methods: {
@@ -271,6 +294,12 @@
           formData.append("menu_price", currentObj.menu_price)
           formData.append("menu_availability", currentObj.menu_availability)
 
+          // check if stock qty true or not null
+          if (currentObj.menu_stock_qty) {
+            // then, add it to context
+            formData.append("menu_stock_qty", currentObj.menu_stock_qty)
+          }
+
           axios.post('api/menu/create', formData)
             .then(function (response) {
 
@@ -280,6 +309,8 @@
               currentObj.overlay = false
 
               currentObj.$v.$reset()
+              
+              currentObj.$router.push('/home/menu/list')
 
             })
             .catch(function (error) {

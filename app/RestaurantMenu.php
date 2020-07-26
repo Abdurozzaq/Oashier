@@ -15,11 +15,8 @@ class RestaurantMenu extends Model
         'menu_description',
         'menu_price',
         'menu_availability',
-        'menu_picture'
+        'menu_picture',
+        'menu_stock_qty'
     ];
 
-    public function stockMenu()
-    {
-    	return $this->hasOne('App\StockMenu');
-    }
 }

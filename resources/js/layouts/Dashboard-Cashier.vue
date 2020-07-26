@@ -197,7 +197,7 @@
         </v-card>
       </v-menu>
     </v-app-bar>
-    <v-main>
+    <v-main class="blue-grey lighten-5">
       <v-container
         fluid
       >
