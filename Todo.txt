@@ -1,0 +1,14 @@
+// INPUT WITH DUPLICATE VALUE OF MENU ID
+$menu_ids = $request->menu_ids;
+
+// Get Duplicate Count
+$menu_ids_count_dupl = array_count_values($menu_ids);
+
+{
+    1
+}
+// Get Keys
+$menu_ids_count_dupl_keys = array_keys($menu_ids_count_dupl);
+
+$menus = RestaurantMenu::whereIn('id', $menu_ids_count_dupl_keys)->get();
+
