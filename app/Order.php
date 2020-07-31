@@ -10,8 +10,8 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'buyer_name',
-        'note',
+        'order_buyer_name',
+        'order_note',
     ];
 
 }

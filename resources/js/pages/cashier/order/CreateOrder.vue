@@ -4,7 +4,7 @@
     <v-row justify="start" class="mx-auto">
       <v-col
         cols="12"
-        
+
       >
         <v-form @submit.prevent="createMenu">
           <v-card
@@ -22,10 +22,10 @@
               </v-icon>
               <span color="white" class="title white--text">Create New Order</span>
             </v-card-title>
-            
+
               <v-card-text class="headline font-weight-bold">
                 <v-row>
-                  
+
                   <v-col cols="12" sm="12">
 
                     <v-alert
@@ -37,7 +37,7 @@
                     >
                       <ul v-for="(error, index) in serverError" v-bind:key="index">
                         <li>
-                          {{ error[0] }} 
+                          {{ error[0] }}
                         </li>
                       </ul>
                     </v-alert>
@@ -49,9 +49,9 @@
                       required
                       :error-messages="orderBuyerNameErrors"
                       v-model="order_buyer_name"
-                      @input="$v.order_buyer_name.$touch()" 
+                      @input="$v.order_buyer_name.$touch()"
                       @blur="$v.order_buyer_name.$touch()"
-                      
+
                     ></v-text-field>
 
                     <v-textarea
@@ -59,10 +59,10 @@
                       label="Order Note"
                       v-model="order_note"
                       :error-messages="orderNoteErrors"
-                      @input="$v.order_note.$touch()" 
+                      @input="$v.order_note.$touch()"
                       @blur="$v.order_note.$touch()"
                     ></v-textarea>
- 
+
                   </v-col>
 
                 </v-row>
@@ -189,10 +189,10 @@
         } else {
           currentObj.errorAlert = false
           currentObj.overlay = true
-         
+
           axios.post('api/order/create', {
-            'buyer_name': currentObj.order_buyer_name,
-            'note': currentObj.order_note,
+            'order_buyer_name': currentObj.order_buyer_name,
+            'order_note': currentObj.order_note,
           })
             .then(function (response) {
 
@@ -202,7 +202,7 @@
               currentObj.overlay = false
 
               currentObj.$v.$reset()
-              
+
               // currentObj.$router.push('/home/menu/list')
 
             })

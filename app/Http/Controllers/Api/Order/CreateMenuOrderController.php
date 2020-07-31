@@ -14,8 +14,8 @@ class CreateMenuOrderController extends Controller
     public function createOrder(Request $request) {
         Order::create([
             'user_id' => Auth::user()->id,
-            'buyer_name' => $request->buyer_name,
-            'note' => $request->note
+            'order_buyer_name' => $request->order_buyer_name,
+            'order_note' => $request->order_note
         ]);
 
         return response()->json([
@@ -30,7 +30,7 @@ class CreateMenuOrderController extends Controller
             'menu_name' => $request->menu_name,
             'quantity' => $request->quantity,
             'total_price' => $request->total_price
-            
+
         ]);
 
         return response()->json([

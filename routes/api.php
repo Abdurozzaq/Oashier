@@ -58,4 +58,5 @@ Route::post('menu/stock/edit', 'Api\RestaurantMenu\RestaurantMenuController@edit
 Route::post('order/create', 'Api\Order\CreateMenuOrderController@createOrder')->middleware('jwt.verify');
 Route::post('order/details/create', 'Api\Order\CreateMenuOrderController@createOrderDetails')->middleware('jwt.verify');
 Route::post('order/create', 'Api\Order\CreateMenuOrderController@createOrder')->middleware('jwt.verify');
+Route::post('order/edit', 'Api\Order\EditMenuOrderController@editOrder')->middleware('jwt.verify');
 Route::get('order/list', 'Api\Order\EditMenuOrderController@getOrderList')->middleware('jwt.verify');

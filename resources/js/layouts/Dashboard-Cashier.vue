@@ -42,6 +42,7 @@
 
           <v-list-item
             link
+            href="/home/order/create"
           >
             <v-list-item-title>Create Order</v-list-item-title>
             <v-list-item-icon>
@@ -51,6 +52,7 @@
 
           <v-list-item
             link
+            href="/home/order/list"
           >
             <v-list-item-title>Order List</v-list-item-title>
             <v-list-item-icon>
@@ -96,7 +98,7 @@
           </v-list-item-icon>
           <v-list-item-title>Menu Stock</v-list-item-title>
         </v-list-item>
-        
+
       </v-list>
     </v-navigation-drawer>
 
@@ -128,7 +130,7 @@
       <v-btn icon>
         <v-icon>mdi-bell</v-icon>
       </v-btn>
-      
+
 
       <v-menu
         v-model="menu"
@@ -186,7 +188,7 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
-                 
+
 
           <v-card-actions>
             <v-spacer></v-spacer>

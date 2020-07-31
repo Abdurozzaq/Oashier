@@ -18,7 +18,7 @@
           class="mb-1"
         ></v-text-field>
 
-        <v-btn 
+        <v-btn
           small
           @click.prevent="getMenu"
           class="mb-5"
@@ -39,7 +39,7 @@
         >
           <ul v-for="(error, index) in serverError" v-bind:key="index">
             <li>
-              {{ error[0] }} 
+              {{ error[0] }}
             </li>
           </ul>
         </v-alert>
@@ -48,7 +48,7 @@
 
         <v-card class="mb-3" v-for="(ma, index) in activatedMenu" :key="'ma' + index">
           <v-list>
-            
+
             <v-list-item color="#B3E5F">
               <v-list-item-avatar size="62">
                 <v-avatar size="62" color="primary">
@@ -65,7 +65,7 @@
 
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn  
+                    <v-btn
                       icon
                       v-bind="attrs"
                       v-on="on"
@@ -76,18 +76,18 @@
                   </template>
                   <span>Edit Menu</span>
                 </v-tooltip>
-                
+
               </v-list-item-action>
 
               <v-list-item-action>
 
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn  
+                    <v-btn
                       icon
                       v-bind="attrs"
                       v-on="on"
-                      @click="stockPrepare(ma.id)"
+                      @click="stockPrepare(ma)"
                     >
                       <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
                     </v-btn>
@@ -101,7 +101,7 @@
 
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn  
+                    <v-btn
                       icon
                       v-bind="attrs"
                       v-on="on"
@@ -115,10 +115,10 @@
 
               </v-list-item-action>
 
-              
+
             </v-list-item>
           </v-list>
-            
+
           <v-overlay
             :absolute="true"
             :value="overlay"
@@ -137,7 +137,7 @@
 
         <v-card class="mb-3" v-for="(md, index) in deactivatedMenu" :key="'md' + index">
           <v-list>
-            
+
             <v-list-item color="#B3E5F">
               <v-list-item-avatar size="62">
                 <v-avatar size="62" color="primary">
@@ -154,7 +154,7 @@
 
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn  
+                    <v-btn
                       icon
                       v-bind="attrs"
                       v-on="on"
@@ -165,18 +165,18 @@
                   </template>
                   <span>Edit Menu</span>
                 </v-tooltip>
-                
+
               </v-list-item-action>
 
               <v-list-item-action>
 
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn  
+                    <v-btn
                       icon
                       v-bind="attrs"
                       v-on="on"
-                      @click="stockPrepare(md.id)"
+                      @click="stockPrepare(md)"
                     >
                       <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
                     </v-btn>
@@ -190,7 +190,7 @@
 
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn  
+                    <v-btn
                       icon
                       v-bind="attrs"
                       v-on="on"
@@ -205,7 +205,7 @@
               </v-list-item-action>
             </v-list-item>
           </v-list>
-            
+
           <v-overlay
             :absolute="true"
             :value="overlay"
@@ -218,7 +218,7 @@
           </v-overlay>
         </v-card>
 
-        
+
       </v-col>
     </v-row>
 
@@ -250,7 +250,7 @@
             filled
             v-model="menu_stock_qty"
             :error-messages="menuStockQtyErrors"
-            @input="$v.menu_stock_qty.$touch()" 
+            @input="$v.menu_stock_qty.$touch()"
             @blur="$v.menu_stock_qty.$touch()"
           ></v-text-field>
         </v-card-text>
@@ -405,10 +405,11 @@
 
     methods: {
 
-      stockPrepare: function(menuId) {
+      stockPrepare: function(item) {
         let currentObj = this
 
-        currentObj.menu_id = menuId
+        currentObj.menu_id = item.id
+        currentObj.menu_stock_qty = item.menu_stock_qty
         currentObj.stockDialog = true
       },
 
@@ -416,12 +417,13 @@
         let currentObj = this
 
         currentObj.menu_id = null
+        currentObj.menu_stock_qty = null
         currentObj.stockDialog = false
       },
 
       editStock: function() {
         let currentObj = this
-        
+
         currentObj.overlayStock = true
         if (currentObj.$v.$invalid) {
           currentObj.errorSnackbar = true
@@ -438,13 +440,14 @@
               currentObj.getMenu()
 
 
-              
+
             })
             .catch(function (error) {
               if(error.response) {
                 currentObj.serverError = error.response.data.errors
                 currentObj.errorAlert = true
               }
+              currentObj.overlayStock = false
             })
         }
 
@@ -467,7 +470,7 @@
             currentObj.successDeleteSnackbar = true
             currentObj.overlay = false
             currentObj.getMenu()
-            
+
           })
           .catch(function (error) {
             if(error.response) {
@@ -476,7 +479,7 @@
             }
           })
 
-      },     
+      },
 
       filterActiveMenu: function() {
         let currentObj = this

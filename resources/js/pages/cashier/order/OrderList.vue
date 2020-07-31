@@ -41,7 +41,7 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="green" @click.prevent="edit(props.item.id)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="green" @click.prevent="editOrderPrepare(props.item)">
                 <v-icon dark>mdi-file-document-edit-outline</v-icon>
               </v-btn>
             </template>
@@ -78,7 +78,7 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="green" @click.prevent="edit(props.item.id)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="green" @click.prevent="editOrderPrepare(props.item)">
                 <v-icon dark>mdi-file-document-edit-outline</v-icon>
               </v-btn>
             </template>
@@ -117,15 +117,106 @@
 
     </v-card>
 
+    <v-dialog
+      v-model="editOrderDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          Edit Order Information
+        </v-card-title>
+
+        <v-card-text>
+          <v-text-field
+            class="mt-8"
+            label="Buyer Name"
+            single-line
+            filled
+            required
+            :error-messages="orderBuyerNameErrors"
+            v-model="order_buyer_name"
+            @input="$v.order_buyer_name.$touch()"
+            @blur="$v.order_buyer_name.$touch()"
+
+          ></v-text-field>
+
+          <v-textarea
+            filled
+            label="Order Note"
+            v-model="order_note"
+            :error-messages="orderNoteErrors"
+            @input="$v.order_note.$touch()"
+            @blur="$v.order_note.$touch()"
+          ></v-textarea>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click.prevent="editOrderCleanUpVar()"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click.prevent="edit()"
+          >
+            Edit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+
+      <v-overlay
+        :absolute="true"
+        :value="overlayOrderInformation"
+      >
+        <v-progress-circular
+          :size="50"
+          color="white"
+          indeterminate
+        ></v-progress-circular>
+      </v-overlay>
+    </v-dialog>
+
+    <v-snackbar
+      v-model="successEditOrderInfo"
+      :timeout="5000"
+      color="success"
+    >
+      Order Information has been Edited successfully from database.
+      <v-btn
+        color="white"
+        text
+        @click="successEditOrderInfo = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
+  import { required, numeric } from 'vuelidate/lib/validators'
   import axios from 'axios'
   export default {
     data() {
       return {
-        search: '',
+
+        // Edit Order form
+        editOrderDialog: false,
+        order_note: null,
+        order_buyer_name: null,
+        order_id: null,
+        overlayOrderInformation: false,
+        successEditOrderInfo: false,
+
+        // Data Table
+        search: null,
         serverError: null,
         errorAlert: false,
         orderList: null,
@@ -136,11 +227,11 @@
             text: 'Buyer Name',
             align: 'start',
             sortable: true,
-            value: 'buyer_name',
+            value: 'order_buyer_name',
           },
           {
             text: 'Note',
-            value: 'note'
+            value: 'order_note'
           },
           {
             text: 'Action',
@@ -148,30 +239,85 @@
             sortable: false
           }
         ],
-
-        orders: [
-          {
-            id: 1,
-            buyer_name: 'Abdurozzaq',
-            note: '089603363136'
-          },
-          {
-            id: 2,
-            buyer_name: 'Hanif',
-            note: '089603363136'
-          },
-          {
-            id: 3,
-            buyer_name: 'Sari',
-            note: '089603363136'
-          }
-        ]
       }
+    }, // end of data()
+
+    validations: {
+      order_note: {
+        required,
+      },
+      order_buyer_name: {
+        required,
+      }
+    }, // end of validations
+
+    computed: {
+      orderNoteErrors () {
+        let currentObj = this
+        const errors = []
+        if (!currentObj.$v.order_note.$dirty) return errors
+        !currentObj.$v.order_note.required && errors.push('Order Note is required.')
+        return errors
+      },
+
+      orderBuyerNameErrors () {
+        let currentObj = this
+        const errors = []
+        if (!currentObj.$v.order_buyer_name.$dirty) return errors
+        !currentObj.$v.order_buyer_name.required && errors.push('Buyer Name is required.')
+        return errors
+      },
     },
 
     methods: {
+      editOrderPrepare: function(item) {
+        let currentObj = this
+
+        currentObj.order_id = item.id
+        currentObj.order_note = item.order_note
+        currentObj.order_buyer_name = item.order_buyer_name
+        currentObj.editOrderDialog = true
+      },
+
+      editOrderCleanUpVar: function() {
+        let currentObj = this
+
+        currentObj.order_id = null
+        currentObj.order_note = null
+        currentObj.order_buyer_name = null
+        currentObj.editOrderDialog = false
+      },
+
       edit: function(data) {
-        console.log(data)
+        let currentObj = this
+
+        currentObj.overlayOrderInformation = true
+        if (currentObj.$v.$invalid) {
+          currentObj.errorSnackbar = true
+        } else {
+          axios.post('api/order/edit', {
+            order_id: currentObj.order_id,
+            order_note: currentObj.order_note,
+            order_buyer_name: currentObj.order_buyer_name
+          })
+            .then(function (response) {
+              // after success show successSnackbar
+              currentObj.successEditOrderInfo = true
+              currentObj.overlayOrderInformation = false
+              currentObj.editOrderCleanUpVar()
+              currentObj.getData()
+
+
+
+            })
+            .catch(function (error) {
+              if(error.response) {
+                currentObj.serverError = error.response.data.errors
+                currentObj.errorAlert = true
+              }
+              currentObj.overlayOrderInformation = false
+            })
+        }
       },
       editMenu: function(data) {
         console.log(data)

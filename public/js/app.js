@@ -2515,6 +2515,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
@@ -4658,14 +4660,16 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    stockPrepare: function stockPrepare(menuId) {
+    stockPrepare: function stockPrepare(item) {
       var currentObj = this;
-      currentObj.menu_id = menuId;
+      currentObj.menu_id = item.id;
+      currentObj.menu_stock_qty = item.menu_stock_qty;
       currentObj.stockDialog = true;
     },
     stockCleanUpVar: function stockCleanUpVar(menuId) {
       var currentObj = this;
       currentObj.menu_id = null;
+      currentObj.menu_stock_qty = null;
       currentObj.stockDialog = false;
     },
     editStock: function editStock() {
@@ -4689,6 +4693,8 @@ __webpack_require__.r(__webpack_exports__);
             currentObj.serverError = error.response.data.errors;
             currentObj.errorAlert = true;
           }
+
+          currentObj.overlayStock = false;
         });
       }
     },
@@ -4953,8 +4959,8 @@ __webpack_require__.r(__webpack_exports__);
         currentObj.errorAlert = false;
         currentObj.overlay = true;
         axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('api/order/create', {
-          'buyer_name': currentObj.order_buyer_name,
-          'note': currentObj.order_note
+          'order_buyer_name': currentObj.order_buyer_name,
+          'order_note': currentObj.order_note
         }).then(function (response) {
           // after success show successSnackbar
           currentObj.successSnackbar = true;
@@ -5188,8 +5194,90 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5313,10 +5401,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      search: '',
+      // Edit Order form
+      editOrderDialog: false,
+      order_note: null,
+      order_buyer_name: null,
+      order_id: null,
+      overlayOrderInformation: false,
+      successEditOrderInfo: false,
+      // Data Table
+      search: null,
       serverError: null,
       errorAlert: false,
       orderList: null,
@@ -5326,33 +5423,84 @@ __webpack_require__.r(__webpack_exports__);
         text: 'Buyer Name',
         align: 'start',
         sortable: true,
-        value: 'buyer_name'
+        value: 'order_buyer_name'
       }, {
         text: 'Note',
-        value: 'note'
+        value: 'order_note'
       }, {
         text: 'Action',
         value: 'action',
         sortable: false
-      }],
-      orders: [{
-        id: 1,
-        buyer_name: 'Abdurozzaq',
-        note: '089603363136'
-      }, {
-        id: 2,
-        buyer_name: 'Hanif',
-        note: '089603363136'
-      }, {
-        id: 3,
-        buyer_name: 'Sari',
-        note: '089603363136'
       }]
     };
   },
+  // end of data()
+  validations: {
+    order_note: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    },
+    order_buyer_name: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__["required"]
+    }
+  },
+  // end of validations
+  computed: {
+    orderNoteErrors: function orderNoteErrors() {
+      var currentObj = this;
+      var errors = [];
+      if (!currentObj.$v.order_note.$dirty) return errors;
+      !currentObj.$v.order_note.required && errors.push('Order Note is required.');
+      return errors;
+    },
+    orderBuyerNameErrors: function orderBuyerNameErrors() {
+      var currentObj = this;
+      var errors = [];
+      if (!currentObj.$v.order_buyer_name.$dirty) return errors;
+      !currentObj.$v.order_buyer_name.required && errors.push('Buyer Name is required.');
+      return errors;
+    }
+  },
   methods: {
+    editOrderPrepare: function editOrderPrepare(item) {
+      var currentObj = this;
+      currentObj.order_id = item.id;
+      currentObj.order_note = item.order_note;
+      currentObj.order_buyer_name = item.order_buyer_name;
+      currentObj.editOrderDialog = true;
+    },
+    editOrderCleanUpVar: function editOrderCleanUpVar() {
+      var currentObj = this;
+      currentObj.order_id = null;
+      currentObj.order_note = null;
+      currentObj.order_buyer_name = null;
+      currentObj.editOrderDialog = false;
+    },
     edit: function edit(data) {
-      console.log(data);
+      var currentObj = this;
+      currentObj.overlayOrderInformation = true;
+
+      if (currentObj.$v.$invalid) {
+        currentObj.errorSnackbar = true;
+      } else {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('api/order/edit', {
+          order_id: currentObj.order_id,
+          order_note: currentObj.order_note,
+          order_buyer_name: currentObj.order_buyer_name
+        }).then(function (response) {
+          // after success show successSnackbar
+          currentObj.successEditOrderInfo = true;
+          currentObj.overlayOrderInformation = false;
+          currentObj.editOrderCleanUpVar();
+          currentObj.getData();
+        })["catch"](function (error) {
+          if (error.response) {
+            currentObj.serverError = error.response.data.errors;
+            currentObj.errorAlert = true;
+          }
+
+          currentObj.overlayOrderInformation = false;
+        });
+      }
     },
     editMenu: function editMenu(data) {
       console.log(data);
@@ -5363,7 +5511,7 @@ __webpack_require__.r(__webpack_exports__);
     getData: function getData() {
       var currentObj = this;
       currentObj.overlay = true;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/order/list').then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('api/order/list').then(function (response) {
         currentObj.orderList = response.data.data;
         currentObj.overlay = false;
       })["catch"](function (error) {
@@ -7425,7 +7573,7 @@ var render = function() {
                   _vm._v(" "),
                   _c(
                     "v-list-item",
-                    { attrs: { link: "" } },
+                    { attrs: { link: "", href: "/home/order/create" } },
                     [
                       _c("v-list-item-title", [_vm._v("Create Order")]),
                       _vm._v(" "),
@@ -7440,7 +7588,7 @@ var render = function() {
                   _vm._v(" "),
                   _c(
                     "v-list-item",
-                    { attrs: { link: "" } },
+                    { attrs: { link: "", href: "/home/order/list" } },
                     [
                       _c("v-list-item-title", [_vm._v("Order List")]),
                       _vm._v(" "),
@@ -10268,7 +10416,7 @@ var render = function() {
                   return _c("ul", { key: index }, [
                     _c("li", [
                       _vm._v(
-                        "\n            " + _vm._s(error[0]) + " \n          "
+                        "\n            " + _vm._s(error[0]) + "\n          "
                       )
                     ])
                   ])
@@ -10420,7 +10568,7 @@ var render = function() {
                                                           $event
                                                         ) {
                                                           return _vm.stockPrepare(
-                                                            ma.id
+                                                            ma
                                                           )
                                                         }
                                                       }
@@ -10706,7 +10854,7 @@ var render = function() {
                                                           $event
                                                         ) {
                                                           return _vm.stockPrepare(
-                                                            md.id
+                                                            md
                                                           )
                                                         }
                                                       }
@@ -11199,7 +11347,7 @@ var render = function() {
                                           _vm._v(
                                             "\n                        " +
                                               _vm._s(error[0]) +
-                                              " \n                      "
+                                              "\n                      "
                                           )
                                         ])
                                       ])
@@ -11923,8 +12071,8 @@ var render = function() {
                                                 on: {
                                                   click: function($event) {
                                                     $event.preventDefault()
-                                                    return _vm.edit(
-                                                      props.item.id
+                                                    return _vm.editOrderPrepare(
+                                                      props.item
                                                     )
                                                   }
                                                 }
@@ -12086,7 +12234,7 @@ var render = function() {
                   ],
                   null,
                   false,
-                  204634942
+                  3521573298
                 )
               })
             : _vm._e(),
@@ -12132,8 +12280,8 @@ var render = function() {
                                                 on: {
                                                   click: function($event) {
                                                     $event.preventDefault()
-                                                    return _vm.edit(
-                                                      props.item.id
+                                                    return _vm.editOrderPrepare(
+                                                      props.item
                                                     )
                                                   }
                                                 }
@@ -12295,7 +12443,7 @@ var render = function() {
                   ],
                   null,
                   false,
-                  204634942
+                  3521573298
                 )
               })
             : _vm._e(),
@@ -12309,6 +12457,168 @@ var render = function() {
               })
             ],
             1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "500" },
+          model: {
+            value: _vm.editOrderDialog,
+            callback: function($$v) {
+              _vm.editOrderDialog = $$v
+            },
+            expression: "editOrderDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "headline grey lighten-2" }, [
+                _vm._v("\n        Edit Order Information\n      ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "v-card-text",
+                [
+                  _c("v-text-field", {
+                    staticClass: "mt-8",
+                    attrs: {
+                      label: "Buyer Name",
+                      "single-line": "",
+                      filled: "",
+                      required: "",
+                      "error-messages": _vm.orderBuyerNameErrors
+                    },
+                    on: {
+                      input: function($event) {
+                        return _vm.$v.order_buyer_name.$touch()
+                      },
+                      blur: function($event) {
+                        return _vm.$v.order_buyer_name.$touch()
+                      }
+                    },
+                    model: {
+                      value: _vm.order_buyer_name,
+                      callback: function($$v) {
+                        _vm.order_buyer_name = $$v
+                      },
+                      expression: "order_buyer_name"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("v-textarea", {
+                    attrs: {
+                      filled: "",
+                      label: "Order Note",
+                      "error-messages": _vm.orderNoteErrors
+                    },
+                    on: {
+                      input: function($event) {
+                        return _vm.$v.order_note.$touch()
+                      },
+                      blur: function($event) {
+                        return _vm.$v.order_note.$touch()
+                      }
+                    },
+                    model: {
+                      value: _vm.order_note,
+                      callback: function($$v) {
+                        _vm.order_note = $$v
+                      },
+                      expression: "order_note"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.editOrderCleanUpVar()
+                        }
+                      }
+                    },
+                    [_vm._v("\n          Cancel\n        ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.edit()
+                        }
+                      }
+                    },
+                    [_vm._v("\n          Edit\n        ")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-overlay",
+            { attrs: { absolute: true, value: _vm.overlayOrderInformation } },
+            [
+              _c("v-progress-circular", {
+                attrs: { size: 50, color: "white", indeterminate: "" }
+              })
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: { timeout: 5000, color: "success" },
+          model: {
+            value: _vm.successEditOrderInfo,
+            callback: function($$v) {
+              _vm.successEditOrderInfo = $$v
+            },
+            expression: "successEditOrderInfo"
+          }
+        },
+        [
+          _vm._v(
+            "\n    Order Information has been Edited successfully from database.\n    "
+          ),
+          _c(
+            "v-btn",
+            {
+              attrs: { color: "white", text: "" },
+              on: {
+                click: function($event) {
+                  _vm.successEditOrderInfo = false
+                }
+              }
+            },
+            [_vm._v("\n      Close\n    ")]
           )
         ],
         1
