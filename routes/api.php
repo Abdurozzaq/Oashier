@@ -35,7 +35,7 @@ Route::group([
     Route::post('email/resend', 'Api\Auth\VerificationApiController@resendVerificationmail')->name('verificationapi.resend');
     Route::post('password/forgot', 'Api\Auth\ForgotPasswordController@sendResetLinkEmail')->name('api.forgot-password');
     Route::post('password/reset', 'Api\Auth\ResetPasswordController@reset')->name('api.reset-password');
-    
+
     Route::post('logout', 'Api\Auth\AuthController@logoutCurrentUser')->middleware('jwt.verify');
     Route::post('refresh', 'Api\Auth\AuthController@refresh');
 
@@ -44,7 +44,7 @@ Route::group([
 
 
 /**
- * Menu 
+ * Menu
  * Routes
  */
 
@@ -56,5 +56,6 @@ Route::post('menu/delete', 'Api\RestaurantMenu\RestaurantMenuController@deleteMe
 Route::post('menu/edit', 'Api\RestaurantMenu\RestaurantMenuController@editMenu')->middleware('jwt.verify');
 Route::post('menu/stock/edit', 'Api\RestaurantMenu\RestaurantMenuController@editStockQty')->middleware('jwt.verify');
 Route::post('order/create', 'Api\Order\CreateMenuOrderController@createOrder')->middleware('jwt.verify');
-
-
+Route::post('order/details/create', 'Api\Order\CreateMenuOrderController@createOrderDetails')->middleware('jwt.verify');
+Route::post('order/create', 'Api\Order\CreateMenuOrderController@createOrder')->middleware('jwt.verify');
+Route::get('order/list', 'Api\Order\EditMenuOrderController@getOrderList')->middleware('jwt.verify');

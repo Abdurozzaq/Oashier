@@ -6,71 +6,36 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Order;
 use App\RestaurantMenu;
+use App\OrderDetails;
+use Illuminate\Support\Facades\Auth;
 
 class CreateMenuOrderController extends Controller
 {
     public function createOrder(Request $request) {
-        $this->validate($request, [
-            'menu_ids' => 'required',
+        Order::create([
+            'user_id' => Auth::user()->id,
+            'buyer_name' => $request->buyer_name,
+            'note' => $request->note
         ]);
 
-        // INPUT WITH DUPLICATE VALUE OF MENU ID
-        $menu_ids = $request->menu_ids;
-        // Return :
-        // {
-        //     "1": 1,
-        //     "2": 1,
-        //     "3": 2
-        // }
-        
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order Created Successfully',
+        ], 200);
+    }
 
-        // Get Duplicate Count
-        $menu_ids_count_dupl = array_count_values($menu_ids);
-        // Return :
-        // {
-        //     "1": 1,
-        //     "2": 1,
-        //     "3": 2
-        // }
-
-        // Get Keys For Get Menus
-        $menu_ids_count_dupl_keys = array_keys($menu_ids_count_dupl);
-        // Return
-        // [
-        //     1,
-        //     2,
-        //     3
-        // ]
-
-        $menu_ids_count_dupl_vals = array_values($menu_ids_count_dupl);
-
-        $menus = RestaurantMenu::whereIn('id', $menu_ids_count_dupl_keys)->get();
+    public function createOrderDetails(Request $request) {
+        Order::create([
+            'order_id' => $request->order_id,
+            'menu_name' => $request->menu_name,
+            'quantity' => $request->quantity,
+            'total_price' => $request->total_price
             
-        // foreach ($menus as $menu) {
-        //     for ($i = 0; $i < count($menu_ids_count_dupl_vals); $i++) {
-        //         $menu['menu_qty'] = $menu_ids_count_dupl_vals[$i];
-        //     }
-            
-        // }
+        ]);
 
-            
-        foreach ($menus as $menu) {
-            foreach ($menu_ids_count_dupl as $key => $value) {
-                if ($menu->id == $key) {
-                    $menu['menu_qty'] = $value;
-                } 
-                
-            }
-            
-        }
-
-        return $menus;
-        
-        // Order::create({
-        //     'user_id' => Auth::user()->id,
-        //     'menu_ids' => $menu_ids,
-
-        // })
-
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order Details Created Successfully',
+        ], 200);
     }
 }

@@ -19,6 +19,9 @@ import CashierHomePage from "./pages/cashier/HomePage.vue"
 import CreateMenuPage from "./pages/cashier/menu/CreateMenu.vue"
 import MenuListPage from "./pages/cashier/menu/MenuList.vue"
 import EditMenuPage from "./pages/cashier/menu/EditMenu.vue"
+import CreateOrderPage from "./pages/cashier/order/CreateOrder.vue"
+import EditOrderMenuPage from "./pages/cashier/order/EditMenu.vue"
+import OrderListPage from "./pages/cashier/order/OrderList.vue"
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -44,7 +47,7 @@ const ifAuthenticated = (to, from, next) => {
         next('/login')
     }
 }
-  
+
 const ifNotAuthenticated = (to, from, next) => {
 
     if (localStorage.hasOwnProperty('userToken') === false) {
@@ -76,10 +79,10 @@ const ifNotAuthenticated = (to, from, next) => {
 
 
 /**
- * Guard For 
- * Admin Only 
+ * Guard For
+ * Admin Only
  * &
- * User Only  
+ * User Only
  */
 const adminOnly = (to, from, next) => {
         axios.get('api/auth/me')
@@ -101,7 +104,7 @@ const adminOnly = (to, from, next) => {
 }
 
 const userOnly = (to, from, next) => {
-    
+
         axios.get('api/auth/me')
             .then(function (response) {
                 // handle success
@@ -121,11 +124,11 @@ const userOnly = (to, from, next) => {
 }
 
 /**
- * Guard For 
+ * Guard For
  * Verified User Email
  */
 const verifiedEmail = (to, from, next) => {
-   
+
         axios.get('api/auth/me')
             .then(function (response) {
                 // handle success
@@ -199,6 +202,30 @@ export const routes = [
                     title: 'Edit Menu - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "order/create",
+                component: CreateOrderPage,
+                meta: {
+                    title: 'Create Order - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "order/edit",
+                component: EditOrderMenuPage,
+                meta: {
+                    title: 'Edit Order Menu - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "order/list",
+                component: OrderListPage,
+                meta: {
+                    title: 'Order List - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
             }
         ]
     },
@@ -266,5 +293,3 @@ export const routes = [
         beforeEnter: multiguard([ifNotAuthenticated]),
     }
 ];
-
-
