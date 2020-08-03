@@ -20,7 +20,7 @@ class CreateRestaurantMenusTable extends Migration
             $table->string('menu_description');
             $table->string('menu_price');
             $table->string('menu_availability');
-            $table->string('menu_picture');
+            $table->string('menu_picture')->nullable();
             $table->string('menu_stock_qty')->nullable();
             $table->timestamps();
         });

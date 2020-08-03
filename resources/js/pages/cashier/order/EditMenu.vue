@@ -16,142 +16,122 @@
           </v-card>
 
           <v-card class="mb-4">
-            <v-card-text>
+            <v-card-title>
+            Add Any Menu
+              <v-spacer></v-spacer>
               <v-text-field
-                label="Search Menu"
-                hint="Search Menu With Name And Price"
-                filled
-                persistent-hint
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Search"
+                single-line
+                hide-details
+                append-outer-icon="mdi-send"
+
               ></v-text-field>
-            </v-card-text>
+            </v-card-title>
+
+            <v-sheet
+              class="mx-auto"
+
+            >
+              <v-slide-group 
+                center-active
+                multiple 
+                show-arrows
+              >
+                <v-slide-item
+                  v-for="(menu, index) in menuList"
+                  :key="index"
+                  class="mx-auto"
+                >
+
+                  <v-card
+                    :loading="loading"
+                    class="mx-5 my-8 blue-grey lighten-5"
+                    width="200px"
+                  >
+                    <v-img
+                      v-if="menu.menu_picture"
+                      height="150"
+                      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                    ></v-img>
+
+                    <v-img
+                      v-else
+                      height="150"
+                      src="/statics/menu.jpg"
+                    ></v-img>
+
+                    <div class="mx-4 mt-3">
+                      <div class="text-h6">{{ menu.menu_name }}</div>
+                      <div class="subtitle-1">
+                        Rp.{{ menu.menu_price }}
+                      </div>
+                      <div class="subtitle-1">
+                        {{ menu.menu_stock_qty }} left
+                      </div>
+                    </div>
+
+                    <v-card-text>
+                      {{ menu.menu_description}}
+                    </v-card-text>
+
+                    <v-divider class="mx-4"></v-divider>
+
+                    <v-card-actions>
+                      <v-btn
+                        color="deep-purple lighten-2"
+                        text
+                        @click.prevent="addMenuToOrder(menu, index)"
+                      >
+                        Add To Order
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+
+                </v-slide-item>
+              </v-slide-group>
+            </v-sheet>
           </v-card>
 
-          <v-sheet
-            class="mx-auto"
 
-          >
-            <v-slide-group multiple show-arrows>
-              <v-slide-item
-              v-for="n in 25"
-              :key="n"
-              >
 
-                <v-card
-                  :loading="loading"
-                  class="mx-5 my-8"
-                  max-width="250px"
+          <v-card class="mb-3" >
+            <v-card-title>Added Menu:</v-card-title>
+            <v-data-table
+              :headers="headers"
+              :items="addedMenu"
+            >
+              <template v-slot:item.quantity="props">
+                <v-edit-dialog
+                  :return-value.sync="props.item.quantity"
+                  large
+                  persistent
+                  @save="save"
+                  @cancel="cancel"
+                  @open="open"
+                  @close="close"
                 >
-                  <v-img
-                    height="150"
-                    src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                  ></v-img>
-
-                  <div class="mx-4 mt-3">
-                    <div class="text-h6">Ayam Bakar</div>
-                    <div class="subtitle-1">
-                      Rp.5000
-                    </div>
-                  </div>
-
-                  <v-card-text>
-
-                    <div>Small plates, salads & sandwiches - an intimate setting</div>
-                  </v-card-text>
-
-                  <v-divider class="mx-4"></v-divider>
-
-                  <v-card-actions>
-                    <v-btn
-                      color="deep-purple lighten-2"
-                      text
-                    >
-                      Add To Order
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-
-              </v-slide-item>
-            </v-slide-group>
-          </v-sheet>
-
-          <div class="text-h6">Added Menu:</div>
-
-          <v-card class="mb-3" v-for="(ma, index) in activatedMenu" :key="'ma' + index">
-            <v-list>
-
-              <v-list-item color="#B3E5F">
-                <v-list-item-avatar size="62">
-                  <v-avatar size="62" color="primary">
-                    <v-img :src="ma.menu_picture"/>
-                  </v-avatar>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title>{{ ma.menu_name }}</v-list-item-title>
-                  <v-list-item-subtitle>Rp{{ ma.menu_price }}</v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-action>
-
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        icon
-                        v-bind="attrs"
-                        v-on="on"
-                        @click.prevent="toMenuEdit(ma.id)"
-                      >
-                        <v-icon color="grey lighten-1">mdi-file-document-edit-outline</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Edit Menu</span>
-                  </v-tooltip>
-
-                </v-list-item-action>
-
-                <v-list-item-action>
-
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        icon
-                        v-bind="attrs"
-                        v-on="on"
-                        @click="stockPrepare(ma.id)"
-                      >
-                        <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Edit Menu Stock</span>
-                  </v-tooltip>
-
-                </v-list-item-action>
-
-                <v-list-item-action>
-
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        icon
-                        v-bind="attrs"
-                        v-on="on"
-                        @click.prevent="deleteMenu(ma.id)"
-                      >
-                        <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Delete Menu</span>
-                  </v-tooltip>
-
-                </v-list-item-action>
-
-
-              </v-list-item>
-            </v-list>
+                  <div>{{ props.item.quantity }}</div>
+                  <template v-slot:input>
+                    <div class="mt-4 title">Update Quantity</div>
+                  </template>
+                  <template v-slot:input>
+                    <v-text-field
+                      v-model="props.item.quantity"
+                      label="Edit"
+                      single-line
+                      counter
+                      autofocus
+                    ></v-text-field>
+                  </template>
+                </v-edit-dialog>
+              </template>
+            </v-data-table>
 
             <v-overlay
               :absolute="true"
-              :value="overlay"
+              :value="overlayAddedMenu"
             >
               <v-progress-circular
                 :size="50"
@@ -161,6 +141,13 @@
             </v-overlay>
           </v-card>
         </div>
+        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+          {{ snackText }}
+
+          <template v-slot:action="{ attrs }">
+            <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+          </template>
+        </v-snackbar>
     </div>
 </template>
 
@@ -169,30 +156,94 @@ import axios from 'axios'
 export default {
     data() {
         return {
-           menuList: null,
-
-        }
+          menuList: null,
+          search: null,
+          loading: false,
+          overlayAddedMenu: false,
+          snack: false,
+          snackColor: null,
+          snackText: null,
+          headers: [
+            {
+              text: 'Menu Name',
+              sortable: true,
+              value: 'menu_name',
+            },
+            {
+              text: 'Menu Qty',
+              sortable: true,
+              value: 'quantity',
+            },
+            {
+              text: 'Harga',
+              sortable: true,
+              value: 'total_price',
+            },
+          ],
+          addedMenu: []
+      }
     },
 
     methods: {
+        save () {
+          this.snack = true
+          this.snackColor = 'success'
+          this.snackText = 'Data saved'
+        },
+        cancel () {
+          this.snack = true
+          this.snackColor = 'error'
+          this.snackText = 'Canceled'
+        },
+        open () {
+          this.snack = true
+          this.snackColor = 'info'
+          this.snackText = 'Dialog opened'
+        },
+        close () {
+          console.log('Dialog closed')
+        },
+        addMenuToOrder: function(menu, index) {
+          let currentObj = this
+          if (currentObj.addedMenu.length == 0) {
+            currentObj.addedMenu.push({
+              'order_id': menu.id,
+              'menu_name': menu.menu_name,
+              'quantity': 1,
+              'total_price': menu.menu_price,
+              'tempId': menu.id
+            })
+          } else {
+            var am = currentObj.addedMenu.filter(am => am.tempId == menu.id)
+            
+            if (am.length == 0) {
+              currentObj.addedMenu.push({
+                'order_id': menu.id,
+                'menu_name': menu.menu_name,
+                'quantity': 1,
+                'total_price': menu.menu_price,
+                'tempId': menu.id
+              })
+            } else {
+              currentObj.snack = true
+              currentObj.snackColor = 'error'
+              currentObj.snackText = 'Menu already added to list!'
+            }
+          }
+          
+        },
         getMenu: function() {
-        let currentObj = this
-        axios.get('api/menu/list')
-          .then(function (response) {
-
-            currentObj.menuList = response.data.menu || null
-            // after success show successSnackbar
-            currentObj.successSnackbar = true
-
-            currentObj.filterActiveMenu()
-            currentObj.filterNotActiveMenu()
-          })
-      },
+          let currentObj = this
+          axios.get('api/menu/list')
+            .then(function (response) {
+              currentObj.menuList = response.data.menu || null
+            })
+        },
     }, // end of methods
 
     mounted: function () {
         let currentObj = this
-
+        currentObj.getMenu()
 
     }
 }

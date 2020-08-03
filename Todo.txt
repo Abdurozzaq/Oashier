@@ -14,9 +14,9 @@ $menus = RestaurantMenu::whereIn('id', $menu_ids_count_dupl_keys)->get();
 
 
 1.
-Input menuIds 
+Input menuIds
 
-2. Diolah, cari menu dari menuIds tadi. Lalu dapatkan qty dari menuIds yang duplicate. 
+2. Diolah, cari menu dari menuIds tadi. Lalu dapatkan qty dari menuIds yang duplicate.
 lalu buat order :
     'user_id',
     'menu_ids',
@@ -24,18 +24,38 @@ lalu buat order :
     'note',
 
 3. di controller yang sama buat order details, yang berisi total harga setiap menu yang duplicate.
-insert($value) 
+insert($value)
     'order_id',
     'menu_name',
     'price',
     'quantity'
 
 
-3. untuk cara dapatkan nya 
+3. untuk cara dapatkan nya
 where user id val, get list of order
 
 4. untuk update atau tambah. show list dulu dari order id, lalu where order id get order detais list.
 untuk update, tinggal update salah satu order details dengan id order details id.
 
-untuk tambah, kan kita sudah dapat order id. jadi tinggal buat order detail baru 
+untuk tambah, kan kita sudah dapat order id. jadi tinggal buat order detail baru
 dengan requirement nya order id.
+
+
+
+
+
+1. Ketika dia klik tambah menu, buat / push data menu dengan parameter data menunya
+  data() {
+    return {
+      orderDetails: [
+        {
+          order_id: 1,
+          menu_name: true,
+          quantity: 1,
+          total_price: 1pcs == prices 1 saja
+        }
+      ]
+    }
+  }
+
+2. lalu ketika telah added, kita harus bisa push qty dan jumlahkan price

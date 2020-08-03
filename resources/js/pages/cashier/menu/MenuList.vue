@@ -51,8 +51,11 @@
 
             <v-list-item color="#B3E5F">
               <v-list-item-avatar size="62">
-                <v-avatar size="62" color="primary">
+                <v-avatar v-if="ma.menu_picture" size="62" color="primary">
                   <v-img :src="ma.menu_picture"/>
+                </v-avatar>
+                <v-avatar v-else color="primary" size="62">
+                  <v-icon dark>mdi-food-fork-drink</v-icon>
                 </v-avatar>
               </v-list-item-avatar>
 
@@ -509,8 +512,23 @@
 
       search: function() {
         let currentObj = this
-        currentObj.menuList = currentObj.menuList.filter(menuList => menuList.menu_name.includes(currentObj.searchValue) || menuList.menu_price.includes(currentObj.searchValue))
-        console.log('success filter data')
+        if (currentObj.searchValue) {
+          axios.get('api/menu/list')
+          .then(function (response) {
+
+            currentObj.menuList = response.data.menu || null
+            // after success show successSnackbar
+            currentObj.menuList = currentObj.menuList.filter(menuList => menuList.menu_name.toLowerCase().includes(currentObj.searchValue.toLowerCase()) || menuList.menu_price.includes(currentObj.searchValue))
+            console.log('success filter data')
+
+            currentObj.filterActiveMenu()
+            currentObj.filterNotActiveMenu()
+          })
+          
+        } else {
+          currentObj.getMenu()
+        }
+        
       }
     },
 

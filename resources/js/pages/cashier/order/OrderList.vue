@@ -38,7 +38,6 @@
         class="elevation-1"
       >
         <template v-slot:item.action="props">
-
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="green" @click.prevent="editOrderPrepare(props.item)">

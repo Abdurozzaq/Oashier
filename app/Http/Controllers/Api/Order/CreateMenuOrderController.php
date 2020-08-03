@@ -30,7 +30,6 @@ class CreateMenuOrderController extends Controller
             'menu_name' => $request->menu_name,
             'quantity' => $request->quantity,
             'total_price' => $request->total_price
-
         ]);
 
         return response()->json([

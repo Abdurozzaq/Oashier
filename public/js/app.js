@@ -4607,6 +4607,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4748,10 +4751,21 @@ __webpack_require__.r(__webpack_exports__);
     },
     search: function search() {
       var currentObj = this;
-      currentObj.menuList = currentObj.menuList.filter(function (menuList) {
-        return menuList.menu_name.includes(currentObj.searchValue) || menuList.menu_price.includes(currentObj.searchValue);
-      });
-      console.log('success filter data');
+
+      if (currentObj.searchValue) {
+        axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('api/menu/list').then(function (response) {
+          currentObj.menuList = response.data.menu || null; // after success show successSnackbar
+
+          currentObj.menuList = currentObj.menuList.filter(function (menuList) {
+            return menuList.menu_name.toLowerCase().includes(currentObj.searchValue.toLowerCase()) || menuList.menu_price.includes(currentObj.searchValue);
+          });
+          console.log('success filter data');
+          currentObj.filterActiveMenu();
+          currentObj.filterNotActiveMenu();
+        });
+      } else {
+        currentObj.getMenu();
+      }
     }
   },
   mounted: function mounted() {
@@ -5145,41 +5159,94 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      menuList: null
+      menuList: null,
+      search: null,
+      loading: false,
+      overlayAddedMenu: false,
+      snack: false,
+      snackColor: null,
+      snackText: null,
+      headers: [{
+        text: 'Menu Name',
+        sortable: true,
+        value: 'menu_name'
+      }, {
+        text: 'Menu Qty',
+        sortable: true,
+        value: 'quantity'
+      }, {
+        text: 'Harga',
+        sortable: true,
+        value: 'total_price'
+      }],
+      addedMenu: []
     };
   },
   methods: {
+    save: function save() {
+      this.snack = true;
+      this.snackColor = 'success';
+      this.snackText = 'Data saved';
+    },
+    cancel: function cancel() {
+      this.snack = true;
+      this.snackColor = 'error';
+      this.snackText = 'Canceled';
+    },
+    open: function open() {
+      this.snack = true;
+      this.snackColor = 'info';
+      this.snackText = 'Dialog opened';
+    },
+    close: function close() {
+      console.log('Dialog closed');
+    },
+    addMenuToOrder: function addMenuToOrder(menu, index) {
+      var currentObj = this;
+
+      if (currentObj.addedMenu.length == 0) {
+        currentObj.addedMenu.push({
+          'order_id': menu.id,
+          'menu_name': menu.menu_name,
+          'quantity': 1,
+          'total_price': menu.menu_price,
+          'tempId': menu.id
+        });
+      } else {
+        var am = currentObj.addedMenu.filter(function (am) {
+          return am.tempId == menu.id;
+        });
+
+        if (am.length == 0) {
+          currentObj.addedMenu.push({
+            'order_id': menu.id,
+            'menu_name': menu.menu_name,
+            'quantity': 1,
+            'total_price': menu.menu_price,
+            'tempId': menu.id
+          });
+        } else {
+          currentObj.snack = true;
+          currentObj.snackColor = 'error';
+          currentObj.snackText = 'Menu already added to list!';
+        }
+      }
+    },
     getMenu: function getMenu() {
       var currentObj = this;
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/menu/list').then(function (response) {
-        currentObj.menuList = response.data.menu || null; // after success show successSnackbar
-
-        currentObj.successSnackbar = true;
-        currentObj.filterActiveMenu();
-        currentObj.filterNotActiveMenu();
+        currentObj.menuList = response.data.menu || null;
       });
     }
   },
   // end of methods
   mounted: function mounted() {
     var currentObj = this;
+    currentObj.getMenu();
   }
 });
 
@@ -5198,7 +5265,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-//
 //
 //
 //
@@ -10442,16 +10508,31 @@ var render = function() {
                               "v-list-item-avatar",
                               { attrs: { size: "62" } },
                               [
-                                _c(
-                                  "v-avatar",
-                                  { attrs: { size: "62", color: "primary" } },
-                                  [
-                                    _c("v-img", {
-                                      attrs: { src: ma.menu_picture }
-                                    })
-                                  ],
-                                  1
-                                )
+                                ma.menu_picture
+                                  ? _c(
+                                      "v-avatar",
+                                      {
+                                        attrs: { size: "62", color: "primary" }
+                                      },
+                                      [
+                                        _c("v-img", {
+                                          attrs: { src: ma.menu_picture }
+                                        })
+                                      ],
+                                      1
+                                    )
+                                  : _c(
+                                      "v-avatar",
+                                      {
+                                        attrs: { color: "primary", size: "62" }
+                                      },
+                                      [
+                                        _c("v-icon", { attrs: { dark: "" } }, [
+                                          _vm._v("mdi-food-fork-drink")
+                                        ])
+                                      ],
+                                      1
+                                    )
                               ],
                               1
                             ),
@@ -11550,389 +11631,263 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "div",
-      { staticClass: "ma-1" },
-      [
-        _c(
-          "v-card",
-          { staticClass: "mb-5" },
-          [
-            _c(
-              "v-card-title",
-              [
-                _c(
-                  "v-icon",
-                  { attrs: { large: "", left: "", color: "grey" } },
-                  [_vm._v("\n            mdi-food-fork-drink\n          ")]
-                ),
-                _vm._v(" "),
-                _c(
-                  "span",
-                  {
-                    staticClass: "title grey--text",
-                    attrs: { color: "white" }
-                  },
-                  [_vm._v("Add Menu To Ozzaq's Order")]
-                )
-              ],
-              1
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "v-card",
-          { staticClass: "mb-4" },
-          [
-            _c(
-              "v-card-text",
-              [
-                _c("v-text-field", {
-                  attrs: {
-                    label: "Search Menu",
-                    hint: "Search Menu With Name And Price",
-                    filled: "",
-                    "persistent-hint": ""
-                  }
-                })
-              ],
-              1
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "v-sheet",
-          { staticClass: "mx-auto" },
-          [
-            _c(
-              "v-slide-group",
-              { attrs: { multiple: "", "show-arrows": "" } },
-              _vm._l(25, function(n) {
-                return _c(
-                  "v-slide-item",
-                  { key: n },
-                  [
-                    _c(
-                      "v-card",
-                      {
-                        staticClass: "mx-5 my-8",
-                        attrs: { loading: _vm.loading, "max-width": "250px" }
-                      },
-                      [
-                        _c("v-img", {
-                          attrs: {
-                            height: "150",
-                            src:
-                              "https://cdn.vuetifyjs.com/images/cards/cooking.png"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "mx-4 mt-3" }, [
-                          _c("div", { staticClass: "text-h6" }, [
-                            _vm._v("Ayam Bakar")
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "subtitle-1" }, [
-                            _vm._v(
-                              "\n                  Rp.5000\n                "
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("v-card-text", [
-                          _c("div", [
-                            _vm._v(
-                              "Small plates, salads & sandwiches - an intimate setting"
-                            )
-                          ])
-                        ]),
-                        _vm._v(" "),
-                        _c("v-divider", { staticClass: "mx-4" }),
-                        _vm._v(" "),
-                        _c(
-                          "v-card-actions",
-                          [
-                            _c(
-                              "v-btn",
-                              {
-                                attrs: {
-                                  color: "deep-purple lighten-2",
-                                  text: ""
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                  Add To Order\n                "
-                                )
-                              ]
-                            )
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                )
-              }),
-              1
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "text-h6" }, [_vm._v("Added Menu:")]),
-        _vm._v(" "),
-        _vm._l(_vm.activatedMenu, function(ma, index) {
-          return _c(
+  return _c(
+    "div",
+    [
+      _c(
+        "div",
+        { staticClass: "ma-1" },
+        [
+          _c(
             "v-card",
-            { key: "ma" + index, staticClass: "mb-3" },
+            { staticClass: "mb-5" },
             [
               _c(
-                "v-list",
+                "v-card-title",
                 [
                   _c(
-                    "v-list-item",
-                    { attrs: { color: "#B3E5F" } },
-                    [
-                      _c(
-                        "v-list-item-avatar",
-                        { attrs: { size: "62" } },
-                        [
-                          _c(
-                            "v-avatar",
-                            { attrs: { size: "62", color: "primary" } },
-                            [_c("v-img", { attrs: { src: ma.menu_picture } })],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-item-content",
-                        [
-                          _c("v-list-item-title", [
-                            _vm._v(_vm._s(ma.menu_name))
-                          ]),
-                          _vm._v(" "),
-                          _c("v-list-item-subtitle", [
-                            _vm._v("Rp" + _vm._s(ma.menu_price))
-                          ])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-item-action",
-                        [
-                          _c(
-                            "v-tooltip",
-                            {
-                              attrs: { bottom: "" },
-                              scopedSlots: _vm._u(
-                                [
-                                  {
-                                    key: "activator",
-                                    fn: function(ref) {
-                                      var on = ref.on
-                                      var attrs = ref.attrs
-                                      return [
-                                        _c(
-                                          "v-btn",
-                                          _vm._g(
-                                            _vm._b(
-                                              {
-                                                attrs: { icon: "" },
-                                                on: {
-                                                  click: function($event) {
-                                                    $event.preventDefault()
-                                                    return _vm.toMenuEdit(ma.id)
-                                                  }
-                                                }
-                                              },
-                                              "v-btn",
-                                              attrs,
-                                              false
-                                            ),
-                                            on
-                                          ),
-                                          [
-                                            _c(
-                                              "v-icon",
-                                              {
-                                                attrs: {
-                                                  color: "grey lighten-1"
-                                                }
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "mdi-file-document-edit-outline"
-                                                )
-                                              ]
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ]
-                                    }
-                                  }
-                                ],
-                                null,
-                                true
-                              )
-                            },
-                            [_vm._v(" "), _c("span", [_vm._v("Edit Menu")])]
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-item-action",
-                        [
-                          _c(
-                            "v-tooltip",
-                            {
-                              attrs: { bottom: "" },
-                              scopedSlots: _vm._u(
-                                [
-                                  {
-                                    key: "activator",
-                                    fn: function(ref) {
-                                      var on = ref.on
-                                      var attrs = ref.attrs
-                                      return [
-                                        _c(
-                                          "v-btn",
-                                          _vm._g(
-                                            _vm._b(
-                                              {
-                                                attrs: { icon: "" },
-                                                on: {
-                                                  click: function($event) {
-                                                    return _vm.stockPrepare(
-                                                      ma.id
-                                                    )
-                                                  }
-                                                }
-                                              },
-                                              "v-btn",
-                                              attrs,
-                                              false
-                                            ),
-                                            on
-                                          ),
-                                          [
-                                            _c(
-                                              "v-icon",
-                                              {
-                                                attrs: {
-                                                  color: "grey lighten-1"
-                                                }
-                                              },
-                                              [
-                                                _vm._v(
-                                                  "mdi-circle-edit-outline"
-                                                )
-                                              ]
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ]
-                                    }
-                                  }
-                                ],
-                                null,
-                                true
-                              )
-                            },
-                            [
-                              _vm._v(" "),
-                              _c("span", [_vm._v("Edit Menu Stock")])
-                            ]
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-item-action",
-                        [
-                          _c(
-                            "v-tooltip",
-                            {
-                              attrs: { bottom: "" },
-                              scopedSlots: _vm._u(
-                                [
-                                  {
-                                    key: "activator",
-                                    fn: function(ref) {
-                                      var on = ref.on
-                                      var attrs = ref.attrs
-                                      return [
-                                        _c(
-                                          "v-btn",
-                                          _vm._g(
-                                            _vm._b(
-                                              {
-                                                attrs: { icon: "" },
-                                                on: {
-                                                  click: function($event) {
-                                                    $event.preventDefault()
-                                                    return _vm.deleteMenu(ma.id)
-                                                  }
-                                                }
-                                              },
-                                              "v-btn",
-                                              attrs,
-                                              false
-                                            ),
-                                            on
-                                          ),
-                                          [
-                                            _c(
-                                              "v-icon",
-                                              {
-                                                attrs: {
-                                                  color: "grey lighten-1"
-                                                }
-                                              },
-                                              [_vm._v("mdi-delete-outline")]
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ]
-                                    }
-                                  }
-                                ],
-                                null,
-                                true
-                              )
-                            },
-                            [_vm._v(" "), _c("span", [_vm._v("Delete Menu")])]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
+                    "v-icon",
+                    { attrs: { large: "", left: "", color: "grey" } },
+                    [_vm._v("\n            mdi-food-fork-drink\n          ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "title grey--text",
+                      attrs: { color: "white" }
+                    },
+                    [_vm._v("Add Menu To Ozzaq's Order")]
                   )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            { staticClass: "mb-4" },
+            [
+              _c(
+                "v-card-title",
+                [
+                  _vm._v("\n        Add Any Menu\n          "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c("v-text-field", {
+                    attrs: {
+                      "append-icon": "mdi-magnify",
+                      label: "Search",
+                      "single-line": "",
+                      "hide-details": "",
+                      "append-outer-icon": "mdi-send"
+                    },
+                    model: {
+                      value: _vm.search,
+                      callback: function($$v) {
+                        _vm.search = $$v
+                      },
+                      expression: "search"
+                    }
+                  })
                 ],
                 1
               ),
               _vm._v(" "),
               _c(
+                "v-sheet",
+                { staticClass: "mx-auto" },
+                [
+                  _c(
+                    "v-slide-group",
+                    {
+                      attrs: {
+                        "center-active": "",
+                        multiple: "",
+                        "show-arrows": ""
+                      }
+                    },
+                    _vm._l(_vm.menuList, function(menu, index) {
+                      return _c(
+                        "v-slide-item",
+                        { key: index, staticClass: "mx-auto" },
+                        [
+                          _c(
+                            "v-card",
+                            {
+                              staticClass: "mx-5 my-8 blue-grey lighten-5",
+                              attrs: { loading: _vm.loading, width: "200px" }
+                            },
+                            [
+                              menu.menu_picture
+                                ? _c("v-img", {
+                                    attrs: {
+                                      height: "150",
+                                      src:
+                                        "https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                                    }
+                                  })
+                                : _c("v-img", {
+                                    attrs: {
+                                      height: "150",
+                                      src: "/statics/menu.jpg"
+                                    }
+                                  }),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "mx-4 mt-3" }, [
+                                _c("div", { staticClass: "text-h6" }, [
+                                  _vm._v(_vm._s(menu.menu_name))
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "subtitle-1" }, [
+                                  _vm._v(
+                                    "\n                    Rp." +
+                                      _vm._s(menu.menu_price) +
+                                      "\n                  "
+                                  )
+                                ]),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "subtitle-1" }, [
+                                  _vm._v(
+                                    "\n                    " +
+                                      _vm._s(menu.menu_stock_qty) +
+                                      " left\n                  "
+                                  )
+                                ])
+                              ]),
+                              _vm._v(" "),
+                              _c("v-card-text", [
+                                _vm._v(
+                                  "\n                  " +
+                                    _vm._s(menu.menu_description) +
+                                    "\n                "
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("v-divider", { staticClass: "mx-4" }),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        color: "deep-purple lighten-2",
+                                        text: ""
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          $event.preventDefault()
+                                          return _vm.addMenuToOrder(menu, index)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                    Add To Order\n                  "
+                                      )
+                                    ]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    }),
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            { staticClass: "mb-3" },
+            [
+              _c("v-card-title", [_vm._v("Added Menu:")]),
+              _vm._v(" "),
+              _c("v-data-table", {
+                attrs: { headers: _vm.headers, items: _vm.addedMenu },
+                scopedSlots: _vm._u([
+                  {
+                    key: "item.quantity",
+                    fn: function(props) {
+                      return [
+                        _c(
+                          "v-edit-dialog",
+                          {
+                            attrs: {
+                              "return-value": props.item.quantity,
+                              large: "",
+                              persistent: ""
+                            },
+                            on: {
+                              "update:returnValue": function($event) {
+                                return _vm.$set(props.item, "quantity", $event)
+                              },
+                              "update:return-value": function($event) {
+                                return _vm.$set(props.item, "quantity", $event)
+                              },
+                              save: _vm.save,
+                              cancel: _vm.cancel,
+                              open: _vm.open,
+                              close: _vm.close
+                            },
+                            scopedSlots: _vm._u(
+                              [
+                                {
+                                  key: "input",
+                                  fn: function() {
+                                    return [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "Edit",
+                                          "single-line": "",
+                                          counter: "",
+                                          autofocus: ""
+                                        },
+                                        model: {
+                                          value: props.item.quantity,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              props.item,
+                                              "quantity",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "props.item.quantity"
+                                        }
+                                      })
+                                    ]
+                                  },
+                                  proxy: true
+                                }
+                              ],
+                              null,
+                              true
+                            )
+                          },
+                          [_c("div", [_vm._v(_vm._s(props.item.quantity))])]
+                        )
+                      ]
+                    }
+                  }
+                ])
+              }),
+              _vm._v(" "),
+              _c(
                 "v-overlay",
-                { attrs: { absolute: true, value: _vm.overlay } },
+                { attrs: { absolute: true, value: _vm.overlayAddedMenu } },
                 [
                   _c("v-progress-circular", {
                     attrs: { size: 50, color: "white", indeterminate: "" }
@@ -11943,11 +11898,54 @@ var render = function() {
             ],
             1
           )
-        })
-      ],
-      2
-    )
-  ])
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: { timeout: 3000, color: _vm.snackColor },
+          scopedSlots: _vm._u([
+            {
+              key: "action",
+              fn: function(ref) {
+                var attrs = ref.attrs
+                return [
+                  _c(
+                    "v-btn",
+                    _vm._b(
+                      {
+                        attrs: { text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.snack = false
+                          }
+                        }
+                      },
+                      "v-btn",
+                      attrs,
+                      false
+                    ),
+                    [_vm._v("Close")]
+                  )
+                ]
+              }
+            }
+          ]),
+          model: {
+            value: _vm.snack,
+            callback: function($$v) {
+              _vm.snack = $$v
+            },
+            expression: "snack"
+          }
+        },
+        [_vm._v("\n      " + _vm._s(_vm.snackText) + "\n\n      ")]
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
