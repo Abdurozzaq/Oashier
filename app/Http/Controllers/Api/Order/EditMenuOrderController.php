@@ -38,4 +38,14 @@ class EditMenuOrderController extends Controller
         'message' => 'Order Information Updated Successfully',
     ], 200);
   }
+
+  public function deleteOrder($id) {
+    $order = Order::findOrFail($id);
+    $order->delete();
+
+    return response()->json([
+      'status' => 'success',
+      'message' => 'Order Deleted Successfully',
+    ], 200);
+  }
 }

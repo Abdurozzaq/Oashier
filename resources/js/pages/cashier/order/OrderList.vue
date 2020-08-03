@@ -56,7 +56,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="deleteOrder(props.item.id)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="deleteOrder(props.item)">
                 <v-icon dark>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
@@ -93,7 +93,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="deleteOrder(props.item.id)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="deleteOrder(props.item)">
                 <v-icon dark>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
@@ -319,10 +319,27 @@
         }
       },
       editMenu: function(data) {
-        console.log(data)
+        let currentObj = this
+        
       },
-      deleteOrder: function(data) {
-        console.log(data)
+      deleteOrder: function(order) {
+        let currentObj = this
+        axios.post('api/order/delete/' + order.id)
+          .then(function (response) {
+            if(currentObj.orderListFiltered) {
+              currentObj.orderList.splice(currentObj.orderList.indexOf(order), 1);
+              currentObj.orderListFiltered.splice(currentObj.orderListFiltered.indexOf(order), 1);
+            } else {
+              currentObj.orderList.splice(currentObj.orderList.indexOf(order), 1);
+            }
+          })
+          .catch(function (error) {
+            if(error.response) {
+              currentObj.serverError = error.response.data.errors
+              currentObj.errorAlert = true
+            }
+            currentObj.overlay = false
+          })
       },
 
       getData: function() {
@@ -348,8 +365,8 @@
         let currentObj = this
         if (currentObj.search != null) {
           currentObj.orderListFiltered = currentObj.orderList.filter(
-            order => order.note.toLowerCase().includes(currentObj.search.toLowerCase()) ||
-            order.buyer_name.toLowerCase().includes(currentObj.search.toLowerCase())
+            order => order.order_note.toLowerCase().includes(currentObj.search.toLowerCase()) ||
+            order.order_buyer_name.toLowerCase().includes(currentObj.search.toLowerCase())
           )
 
         } else {

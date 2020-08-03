@@ -5181,6 +5181,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -5204,6 +5219,10 @@ __webpack_require__.r(__webpack_exports__);
         text: 'Harga',
         sortable: true,
         value: 'total_price'
+      }, {
+        text: 'Action',
+        value: 'action',
+        sortable: false
       }],
       addedMenu: []
     };
@@ -5235,6 +5254,10 @@ __webpack_require__.r(__webpack_exports__);
     },
     close: function close() {
       console.log('Dialog closed');
+    },
+    removeMenuFromOrder: function removeMenuFromOrder(menu) {
+      var currentObj = this;
+      currentObj.addedMenu.splice(currentObj.addedMenu.indexOf(menu), 1);
     },
     addMenuToOrder: function addMenuToOrder(menu, index) {
       var currentObj = this;
@@ -5604,10 +5627,25 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     editMenu: function editMenu(data) {
-      console.log(data);
+      var currentObj = this;
     },
-    deleteOrder: function deleteOrder(data) {
-      console.log(data);
+    deleteOrder: function deleteOrder(order) {
+      var currentObj = this;
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('api/order/delete/' + order.id).then(function (response) {
+        if (currentObj.orderListFiltered) {
+          currentObj.orderList.splice(currentObj.orderList.indexOf(order), 1);
+          currentObj.orderListFiltered.splice(currentObj.orderListFiltered.indexOf(order), 1);
+        } else {
+          currentObj.orderList.splice(currentObj.orderList.indexOf(order), 1);
+        }
+      })["catch"](function (error) {
+        if (error.response) {
+          currentObj.serverError = error.response.data.errors;
+          currentObj.errorAlert = true;
+        }
+
+        currentObj.overlay = false;
+      });
     },
     getData: function getData() {
       var currentObj = this;
@@ -5629,7 +5667,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (currentObj.search != null) {
         currentObj.orderListFiltered = currentObj.orderList.filter(function (order) {
-          return order.note.toLowerCase().includes(currentObj.search.toLowerCase()) || order.buyer_name.toLowerCase().includes(currentObj.search.toLowerCase());
+          return order.order_note.toLowerCase().includes(currentObj.search.toLowerCase()) || order.order_buyer_name.toLowerCase().includes(currentObj.search.toLowerCase());
         });
       } else {
         currentObj.orderListFiltered = null;
@@ -11987,6 +12025,71 @@ var render = function() {
                         )
                       ]
                     }
+                  },
+                  {
+                    key: "item.action",
+                    fn: function(props) {
+                      return [
+                        _c(
+                          "v-tooltip",
+                          {
+                            attrs: { bottom: "" },
+                            scopedSlots: _vm._u(
+                              [
+                                {
+                                  key: "activator",
+                                  fn: function(ref) {
+                                    var on = ref.on
+                                    var attrs = ref.attrs
+                                    return [
+                                      _c(
+                                        "v-btn",
+                                        _vm._g(
+                                          _vm._b(
+                                            {
+                                              staticClass: "mx-2",
+                                              attrs: {
+                                                fab: "",
+                                                dark: "",
+                                                small: "",
+                                                color: "red"
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  $event.preventDefault()
+                                                  return _vm.removeMenuFromOrder(
+                                                    props.item
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            "v-btn",
+                                            attrs,
+                                            false
+                                          ),
+                                          on
+                                        ),
+                                        [
+                                          _c(
+                                            "v-icon",
+                                            { attrs: { dark: "" } },
+                                            [_vm._v("mdi-trash-can-outline")]
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ]
+                                  }
+                                }
+                              ],
+                              null,
+                              true
+                            )
+                          },
+                          [_vm._v(" "), _c("span", [_vm._v("Delete Order")])]
+                        )
+                      ]
+                    }
                   }
                 ])
               }),
@@ -12302,7 +12405,7 @@ var render = function() {
                                                   click: function($event) {
                                                     $event.preventDefault()
                                                     return _vm.deleteOrder(
-                                                      props.item.id
+                                                      props.item
                                                     )
                                                   }
                                                 }
@@ -12338,7 +12441,7 @@ var render = function() {
                   ],
                   null,
                   false,
-                  3521573298
+                  4133013489
                 )
               })
             : _vm._e(),
@@ -12511,7 +12614,7 @@ var render = function() {
                                                   click: function($event) {
                                                     $event.preventDefault()
                                                     return _vm.deleteOrder(
-                                                      props.item.id
+                                                      props.item
                                                     )
                                                   }
                                                 }
@@ -12547,7 +12650,7 @@ var render = function() {
                   ],
                   null,
                   false,
-                  3521573298
+                  4133013489
                 )
               })
             : _vm._e(),

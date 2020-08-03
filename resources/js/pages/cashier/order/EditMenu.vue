@@ -149,6 +149,21 @@
                   </template>
                 </v-edit-dialog>
               </template>
+
+
+              <template v-slot:item.action="props">
+        
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="removeMenuFromOrder(props.item)">
+                      <v-icon dark>mdi-trash-can-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Delete Order</span>
+                </v-tooltip>
+
+              </template>
+
             </v-data-table>
 
             <v-overlay
@@ -201,6 +216,11 @@ export default {
               sortable: true,
               value: 'total_price',
             },
+            {
+              text: 'Action',
+              value: 'action',
+              sortable: false
+            }
           ],
           addedMenu: []
       }
@@ -233,6 +253,11 @@ export default {
         },
         close () {
           console.log('Dialog closed')
+        },
+        removeMenuFromOrder: function(menu) {
+          let currentObj = this
+          
+          currentObj.addedMenu.splice(currentObj.addedMenu.indexOf(menu), 1);
         },
         addMenuToOrder: function(menu, index) {
           let currentObj = this

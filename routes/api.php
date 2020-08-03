@@ -60,3 +60,4 @@ Route::post('order/details/create', 'Api\Order\CreateMenuOrderController@createO
 Route::post('order/create', 'Api\Order\CreateMenuOrderController@createOrder')->middleware('jwt.verify');
 Route::post('order/edit', 'Api\Order\EditMenuOrderController@editOrder')->middleware('jwt.verify');
 Route::get('order/list', 'Api\Order\EditMenuOrderController@getOrderList')->middleware('jwt.verify');
+Route::post('order/delete/{id}', 'Api\Order\EditMenuOrderController@deleteOrder')->middleware('jwt.verify');
