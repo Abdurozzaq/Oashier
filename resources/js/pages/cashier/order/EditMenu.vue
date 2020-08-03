@@ -97,7 +97,17 @@
 
 
           <v-card class="mb-3" >
-            <v-card-title>Added Menu:</v-card-title>
+            <v-card-title>
+              Added Menu:
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue-grey"
+                class="ma-2 white--text"
+              >
+                Save
+                <v-icon right dark>mdi-send</v-icon>
+              </v-btn>
+            </v-card-title>
             <v-data-table
               :headers="headers"
               :items="addedMenu"
@@ -107,23 +117,35 @@
                   :return-value.sync="props.item.quantity"
                   large
                   persistent
-                  @save="save"
+                  @save="save(Object.keys(props.item), props.item)"
                   @cancel="cancel"
                   @open="open"
                   @close="close"
                 >
-                  <div>{{ props.item.quantity }}</div>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <div 
+                      v-bind="attrs" 
+                      v-on="on"
+                    >
+                      {{ props.item.quantity }} 
+                      <v-icon>mdi-tooltip-edit-outline</v-icon>
+                    </div>
+                  </template>
+                  <span>Edit Quantity</span>
+                </v-tooltip>
+                  
                   <template v-slot:input>
                     <div class="mt-4 title">Update Quantity</div>
                   </template>
                   <template v-slot:input>
-                    <v-text-field
+                    <v-slider
+                    class="mt-10"
                       v-model="props.item.quantity"
-                      label="Edit"
-                      single-line
-                      counter
-                      autofocus
-                    ></v-text-field>
+                      :thumb-size="24"
+                      :max="props.item.stock_qty"
+                      thumb-label="always"
+                    ></v-slider>
                   </template>
                 </v-edit-dialog>
               </template>
@@ -185,20 +207,29 @@ export default {
     },
 
     methods: {
-        save () {
-          this.snack = true
-          this.snackColor = 'success'
-          this.snackText = 'Data saved'
+        save (index, props) {
+          let currentObj = this
+          currentObj.addedMenu.forEach(function (menu) {
+            if (menu.tempId == props.tempId) {
+              menu.total_price = menu.one_unit_price * menu.quantity
+              console.log('success edit qty')
+            }
+          })
+          currentObj.snack = true
+          currentObj.snackColor = 'success'
+          currentObj.snackText = 'Data Changed'
         },
         cancel () {
-          this.snack = true
-          this.snackColor = 'error'
-          this.snackText = 'Canceled'
+          let currentObj = this
+          currentObj.snack = true
+          currentObj.snackColor = 'error'
+          currentObj.snackText = 'Canceled'
         },
         open () {
-          this.snack = true
-          this.snackColor = 'info'
-          this.snackText = 'Dialog opened'
+          let currentObj = this
+          currentObj.snack = true
+          currentObj.snackColor = 'info'
+          currentObj.snackText = 'Dialog opened'
         },
         close () {
           console.log('Dialog closed')
@@ -210,8 +241,10 @@ export default {
               'order_id': menu.id,
               'menu_name': menu.menu_name,
               'quantity': 1,
+              'one_unit_price': menu.menu_price,
               'total_price': menu.menu_price,
-              'tempId': menu.id
+              'tempId': menu.id,
+              'stock_qty': menu.menu_stock_qty
             })
           } else {
             var am = currentObj.addedMenu.filter(am => am.tempId == menu.id)
@@ -221,8 +254,10 @@ export default {
                 'order_id': menu.id,
                 'menu_name': menu.menu_name,
                 'quantity': 1,
+                'one_unit_price': menu.menu_price,
                 'total_price': menu.menu_price,
-                'tempId': menu.id
+                'tempId': menu.id,
+                'stock_qty': menu.menu_stock_qty
               })
             } else {
               currentObj.snack = true

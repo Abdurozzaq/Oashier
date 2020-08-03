@@ -5159,6 +5159,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -5187,20 +5209,29 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
-    save: function save() {
-      this.snack = true;
-      this.snackColor = 'success';
-      this.snackText = 'Data saved';
+    save: function save(index, props) {
+      var currentObj = this;
+      currentObj.addedMenu.forEach(function (menu) {
+        if (menu.tempId == props.tempId) {
+          menu.total_price = menu.one_unit_price * menu.quantity;
+          console.log('success edit qty');
+        }
+      });
+      currentObj.snack = true;
+      currentObj.snackColor = 'success';
+      currentObj.snackText = 'Data Changed';
     },
     cancel: function cancel() {
-      this.snack = true;
-      this.snackColor = 'error';
-      this.snackText = 'Canceled';
+      var currentObj = this;
+      currentObj.snack = true;
+      currentObj.snackColor = 'error';
+      currentObj.snackText = 'Canceled';
     },
     open: function open() {
-      this.snack = true;
-      this.snackColor = 'info';
-      this.snackText = 'Dialog opened';
+      var currentObj = this;
+      currentObj.snack = true;
+      currentObj.snackColor = 'info';
+      currentObj.snackText = 'Dialog opened';
     },
     close: function close() {
       console.log('Dialog closed');
@@ -5213,8 +5244,10 @@ __webpack_require__.r(__webpack_exports__);
           'order_id': menu.id,
           'menu_name': menu.menu_name,
           'quantity': 1,
+          'one_unit_price': menu.menu_price,
           'total_price': menu.menu_price,
-          'tempId': menu.id
+          'tempId': menu.id,
+          'stock_qty': menu.menu_stock_qty
         });
       } else {
         var am = currentObj.addedMenu.filter(function (am) {
@@ -5226,8 +5259,10 @@ __webpack_require__.r(__webpack_exports__);
             'order_id': menu.id,
             'menu_name': menu.menu_name,
             'quantity': 1,
+            'one_unit_price': menu.menu_price,
             'total_price': menu.menu_price,
-            'tempId': menu.id
+            'tempId': menu.id,
+            'stock_qty': menu.menu_stock_qty
           });
         } else {
           currentObj.snack = true;
@@ -11814,7 +11849,29 @@ var render = function() {
             "v-card",
             { staticClass: "mb-3" },
             [
-              _c("v-card-title", [_vm._v("Added Menu:")]),
+              _c(
+                "v-card-title",
+                [
+                  _vm._v("\n          Added Menu:\n          "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "ma-2 white--text",
+                      attrs: { color: "blue-grey" }
+                    },
+                    [
+                      _vm._v("\n            Save\n            "),
+                      _c("v-icon", { attrs: { right: "", dark: "" } }, [
+                        _vm._v("mdi-send")
+                      ])
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
               _vm._v(" "),
               _c("v-data-table", {
                 attrs: { headers: _vm.headers, items: _vm.addedMenu },
@@ -11838,7 +11895,9 @@ var render = function() {
                               "update:return-value": function($event) {
                                 return _vm.$set(props.item, "quantity", $event)
                               },
-                              save: _vm.save,
+                              save: function($event) {
+                                _vm.save(Object.keys(props.item), props.item)
+                              },
                               cancel: _vm.cancel,
                               open: _vm.open,
                               close: _vm.close
@@ -11849,12 +11908,12 @@ var render = function() {
                                   key: "input",
                                   fn: function() {
                                     return [
-                                      _c("v-text-field", {
+                                      _c("v-slider", {
+                                        staticClass: "mt-10",
                                         attrs: {
-                                          label: "Edit",
-                                          "single-line": "",
-                                          counter: "",
-                                          autofocus: ""
+                                          "thumb-size": 24,
+                                          max: props.item.stock_qty,
+                                          "thumb-label": "always"
                                         },
                                         model: {
                                           value: props.item.quantity,
@@ -11877,7 +11936,54 @@ var render = function() {
                               true
                             )
                           },
-                          [_c("div", [_vm._v(_vm._s(props.item.quantity))])]
+                          [
+                            _c(
+                              "v-tooltip",
+                              {
+                                attrs: { bottom: "" },
+                                scopedSlots: _vm._u(
+                                  [
+                                    {
+                                      key: "activator",
+                                      fn: function(ref) {
+                                        var on = ref.on
+                                        var attrs = ref.attrs
+                                        return [
+                                          _c(
+                                            "div",
+                                            _vm._g(
+                                              _vm._b({}, "div", attrs, false),
+                                              on
+                                            ),
+                                            [
+                                              _vm._v(
+                                                "\n                  " +
+                                                  _vm._s(props.item.quantity) +
+                                                  " \n                  "
+                                              ),
+                                              _c("v-icon", [
+                                                _vm._v(
+                                                  "mdi-tooltip-edit-outline"
+                                                )
+                                              ])
+                                            ],
+                                            1
+                                          )
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  null,
+                                  true
+                                )
+                              },
+                              [
+                                _vm._v(" "),
+                                _c("span", [_vm._v("Edit Quantity")])
+                              ]
+                            )
+                          ],
+                          1
                         )
                       ]
                     }
