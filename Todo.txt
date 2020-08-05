@@ -59,3 +59,7 @@ dengan requirement nya order id.
   }
 
 2. lalu ketika telah added, kita harus bisa push qty dan jumlahkan price
+
+
+saat edit qty di added menu. masih blom ada validasi nya tambah aja terus kasih snackbar
+kalo error

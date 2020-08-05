@@ -82,7 +82,7 @@
                       <v-btn
                         color="deep-purple lighten-2"
                         text
-                        @click.prevent="addMenuToOrder(menu, index)"
+                        @click.prevent="addMenuToOrder(menu)"
                       >
                         Add To Order
                       </v-btn>
@@ -94,15 +94,28 @@
             </v-sheet>
           </v-card>
 
+          <v-alert
+            v-model="errorAlert"
+            border="top"
+            color="red lighten-2"
+            dark
+            dismissible
+          >
+            <ul v-for="(error, index) in serverError" v-bind:key="index">
+              <li>
+                {{ error[0] }}
+              </li>
+            </ul>
+          </v-alert>
 
-
-          <v-card class="mb-3" >
+          <v-card class="mb-3">
             <v-card-title>
               Added Menu:
               <v-spacer></v-spacer>
               <v-btn
                 color="blue-grey"
                 class="ma-2 white--text"
+                @click.prevent="saveAddedMenu()"
               >
                 Save
                 <v-icon right dark>mdi-send</v-icon>
@@ -117,7 +130,7 @@
                   :return-value.sync="props.item.quantity"
                   large
                   persistent
-                  @save="save(Object.keys(props.item), props.item)"
+                  @save="save(props.item)"
                   @cancel="cancel"
                   @open="open"
                   @close="close"
@@ -140,11 +153,21 @@
                   </template>
                   <template v-slot:input>
                     <v-slider
-                    class="mt-10"
+                      class="mt-10"
+                      v-if="props.item.menu_stock_qty"
                       v-model="props.item.quantity"
+                      min="1"
+                      :max="props.item.menu_stock_qty"
                       :thumb-size="24"
-                      :max="props.item.stock_qty"
                       thumb-label="always"
+                    ></v-slider>
+
+                    <v-slider
+                      class="mt-10"
+                      v-else
+                      v-model="props.item.quantity"
+                      min="1"
+                      :max="props.item.stock_qty"
                     ></v-slider>
                   </template>
                 </v-edit-dialog>
@@ -189,6 +212,7 @@
 </template>
 
 <script>
+const Str = require('@supercharge/strings')
 import axios from 'axios'
 export default {
     data() {
@@ -200,6 +224,8 @@ export default {
           snack: false,
           snackColor: null,
           snackText: null,
+          serverError: null,
+          errorAlert: false,
           headers: [
             {
               text: 'Menu Name',
@@ -227,83 +253,151 @@ export default {
     },
 
     methods: {
-        save (index, props) {
-          let currentObj = this
-          currentObj.addedMenu.forEach(function (menu) {
-            if (menu.tempId == props.tempId) {
-              menu.total_price = menu.one_unit_price * menu.quantity
-              console.log('success edit qty')
-            }
+
+      stock: function(props) {
+        let currentObj = this
+
+        currentObj.addedMenu.forEach(function (menu) {
+          if (menu.menu_id == props.menu_id) {
+            return menu.menu_stock_qty
+          }
+        })
+      },
+      save (props) {
+        let currentObj = this
+        currentObj.addedMenu.forEach(function (menu) {
+          if (menu.menu_id == props.menu_id) {
+            menu.total_price = menu.one_unit_price * menu.quantity
+            console.log('success edit qty')
+          }
+        })
+        currentObj.snack = true
+        currentObj.snackColor = 'success'
+        currentObj.snackText = 'Data Changed'
+      },
+      cancel () {
+        let currentObj = this
+        currentObj.snack = true
+        currentObj.snackColor = 'error'
+        currentObj.snackText = 'Canceled'
+      },
+      open () {
+        let currentObj = this
+        currentObj.snack = true
+        currentObj.snackColor = 'info'
+        currentObj.snackText = 'Dialog opened'
+      },
+      close () {
+        console.log('Dialog closed')
+      },
+      removeMenuFromOrder: function(menu) {
+        let currentObj = this
+
+        currentObj.overlayAddedMenu = true
+        axios.post('api/order/details/delete/' + menu.code)
+          .then(function (response) {
+            currentObj.addedMenu.splice(currentObj.addedMenu.indexOf(menu), 1);
+            currentObj.overlayAddedMenu = false
+
+            currentObj.snack = true
+            currentObj.snackColor = 'success'
+            currentObj.snackText = 'Menu Has Been Removed From List'
           })
-          currentObj.snack = true
-          currentObj.snackColor = 'success'
-          currentObj.snackText = 'Data Changed'
-        },
-        cancel () {
-          let currentObj = this
-          currentObj.snack = true
-          currentObj.snackColor = 'error'
-          currentObj.snackText = 'Canceled'
-        },
-        open () {
-          let currentObj = this
-          currentObj.snack = true
-          currentObj.snackColor = 'info'
-          currentObj.snackText = 'Dialog opened'
-        },
-        close () {
-          console.log('Dialog closed')
-        },
-        removeMenuFromOrder: function(menu) {
-          let currentObj = this
+          .catch(function (error) {
+            currentObj.overlay = false
+            if(error.response) {
+              currentObj.serverError = error.response.data.errors
+              currentObj.errorAlert = true
+            }
+
+            currentObj.overlayAddedMenu = false
+          })
+        
+        
+      },
+      addMenuToOrder: function(menu) {
+        let currentObj = this
+        let order_id = currentObj.$route.query.id
+        if (currentObj.addedMenu.length == 0) {
+          currentObj.addedMenu.push({
+            'order_id': order_id,
+            'menu_id': menu.id,
+            'menu_name': menu.menu_name,
+            'code': Str.random(),
+            'quantity': 1,
+            'one_unit_price': menu.menu_price,
+            'total_price': menu.menu_price,
+            'stock_qty': menu.menu_stock_qty
+          })
+        } else {
+          var am = currentObj.addedMenu.filter(am => am.menu_id == menu.id)
           
-          currentObj.addedMenu.splice(currentObj.addedMenu.indexOf(menu), 1);
-        },
-        addMenuToOrder: function(menu, index) {
-          let currentObj = this
-          if (currentObj.addedMenu.length == 0) {
+          if (am.length == 0) {
             currentObj.addedMenu.push({
-              'order_id': menu.id,
+              'order_id': order_id,
+              'menu_id': menu.id,
               'menu_name': menu.menu_name,
+              'code': Str.random(),
               'quantity': 1,
               'one_unit_price': menu.menu_price,
               'total_price': menu.menu_price,
-              'tempId': menu.id,
               'stock_qty': menu.menu_stock_qty
             })
           } else {
-            var am = currentObj.addedMenu.filter(am => am.tempId == menu.id)
-            
-            if (am.length == 0) {
-              currentObj.addedMenu.push({
-                'order_id': menu.id,
-                'menu_name': menu.menu_name,
-                'quantity': 1,
-                'one_unit_price': menu.menu_price,
-                'total_price': menu.menu_price,
-                'tempId': menu.id,
-                'stock_qty': menu.menu_stock_qty
-              })
-            } else {
-              currentObj.snack = true
-              currentObj.snackColor = 'error'
-              currentObj.snackText = 'Menu already added to list!'
-            }
+            currentObj.snack = true
+            currentObj.snackColor = 'error'
+            currentObj.snackText = 'Menu already added to list!'
           }
-          
-        },
-        getMenu: function() {
-          let currentObj = this
-          axios.get('api/menu/list')
-            .then(function (response) {
-              currentObj.menuList = response.data.menu || null
-            })
-        },
+        }
+        
+      },
+      getMenu: function() {
+        let currentObj = this
+        axios.get('api/menu/list')
+          .then(function (response) {
+            currentObj.menuList = response.data.menu || null
+          })
+      },
+
+      getAddedMenu: function() {
+        let currentObj = this
+        let id = currentObj.$route.query.id
+        currentObj.overlayAddedMenu = true
+        axios.post('api/order/details/list/' + id)
+          .then(function (response) {
+            currentObj.addedMenu = response.data.menu || []
+            currentObj.overlayAddedMenu = false
+          })
+        
+      },
+
+      saveAddedMenu: function() {
+        let currentObj = this
+
+        currentObj.overlayAddedMenu = true
+        axios.post('api/order/details/create', currentObj.addedMenu)
+          .then(function (response) {
+            currentObj.snack = true
+            currentObj.snackColor = 'success'
+            currentObj.snackText = 'Menu Saved Succesfully'
+            currentObj.overlayAddedMenu = false
+          })
+          .catch(function (error) {
+            currentObj.overlay = false
+            if(error.response) {
+              currentObj.serverError = error.response.data.errors
+              currentObj.errorAlert = true
+            }
+
+            currentObj.overlayAddedMenu = false
+          })
+      }
     }, // end of methods
 
-    mounted: function () {
+    beforeMount: function () {
         let currentObj = this
         currentObj.getMenu()
+        currentObj.getAddedMenu()
 
     }
 }

@@ -203,6 +203,9 @@
 
               currentObj.$v.$reset()
 
+              let id = response.data.id
+              currentObj.$router.push({ path: '/home/order/edit', query: { id: id }})
+
               // currentObj.$router.push('/home/menu/list')
 
             })

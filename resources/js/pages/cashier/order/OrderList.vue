@@ -48,7 +48,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="blue" @click.prevent="editMenu(props.item.id)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="blue" @click.prevent="toEditMenu(props.item.id)">
                 <v-icon dark>mdi-circle-edit-outline</v-icon>
               </v-btn>
             </template>
@@ -85,7 +85,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="blue" @click.prevent="editMenu(props.item.id)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="blue" @click.prevent="toEditMenu(props.item.id)">
                 <v-icon dark>mdi-circle-edit-outline</v-icon>
               </v-btn>
             </template>
@@ -318,10 +318,6 @@
             })
         }
       },
-      editMenu: function(data) {
-        let currentObj = this
-        
-      },
       deleteOrder: function(order) {
         let currentObj = this
         axios.post('api/order/delete/' + order.id)
@@ -340,6 +336,12 @@
             }
             currentObj.overlay = false
           })
+      },
+
+      toEditMenu: function(id) {
+        let currentObj = this
+
+        currentObj.$router.push({ path: '/home/order/edit', query: { id: id }})
       },
 
       getData: function() {

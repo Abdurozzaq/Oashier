@@ -10,8 +10,12 @@ class OrderDetails extends Model
 
     protected $fillable = [
         'order_id',
+        'menu_id',
+        'code',
         'menu_name',
+        'one_unit_price',
         'total_price',
         'quantity'
     ];  
+
 }

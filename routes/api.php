@@ -47,17 +47,28 @@ Route::group([
  * Menu
  * Routes
  */
-
-Route::get('data', 'Api\RestaurantMenu\RestaurantMenuController@test')->middleware('jwt.verify');
+// Route::get('data', 'Api\RestaurantMenu\RestaurantMenuController@test')->middleware('jwt.verify');
 Route::get('menu/list', 'Api\RestaurantMenu\RestaurantMenuController@showMenu')->middleware('jwt.verify');
 Route::post('menu/get', 'Api\RestaurantMenu\RestaurantMenuController@getMenu')->middleware('jwt.verify');
 Route::post('menu/create', 'Api\RestaurantMenu\RestaurantMenuController@createMenu')->middleware('jwt.verify');
 Route::post('menu/delete', 'Api\RestaurantMenu\RestaurantMenuController@deleteMenu')->middleware('jwt.verify');
 Route::post('menu/edit', 'Api\RestaurantMenu\RestaurantMenuController@editMenu')->middleware('jwt.verify');
 Route::post('menu/stock/edit', 'Api\RestaurantMenu\RestaurantMenuController@editStockQty')->middleware('jwt.verify');
-Route::post('order/create', 'Api\Order\CreateMenuOrderController@createOrder')->middleware('jwt.verify');
-Route::post('order/details/create', 'Api\Order\CreateMenuOrderController@createOrderDetails')->middleware('jwt.verify');
-Route::post('order/create', 'Api\Order\CreateMenuOrderController@createOrder')->middleware('jwt.verify');
-Route::post('order/edit', 'Api\Order\EditMenuOrderController@editOrder')->middleware('jwt.verify');
-Route::get('order/list', 'Api\Order\EditMenuOrderController@getOrderList')->middleware('jwt.verify');
-Route::post('order/delete/{id}', 'Api\Order\EditMenuOrderController@deleteOrder')->middleware('jwt.verify');
+
+/** 
+ * Order 
+ * Routes
+ */
+Route::post('order/create', 'Api\Order\OrderController@createOrder')->middleware('jwt.verify');
+Route::post('order/edit', 'Api\Order\OrderController@editOrder')->middleware('jwt.verify');
+Route::get('order/list', 'Api\Order\OrderController@getOrderList')->middleware('jwt.verify');
+Route::post('order/delete/{id}', 'Api\Order\OrderController@deleteOrder')->middleware('jwt.verify');
+
+/** 
+ * Order 
+ * Details
+ * Routes
+ */
+Route::post('order/details/create', 'Api\Order\OrderDetailsController@createOrderDetails')->middleware('jwt.verify');
+Route::post('order/details/list/{id}', 'Api\Order\OrderDetailsController@getOrderDetailsList')->middleware('jwt.verify');
+Route::post('order/details/delete/{code}', 'Api\Order\OrderDetailsController@deleteMenuFromOrder')->middleware('jwt.verify');
