@@ -30,7 +30,6 @@ class AuthController extends Controller
     public function refresh() {
         return response()->json([
             'status' => 'success',
-            //LALU PADA METHOD createToken(), TAMBAHKAN PARAMETER ABILITIESNYA
             'token' => auth()->refresh(true, true),
         ], 200);
     }
@@ -43,7 +42,6 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            //LALU PADA METHOD createToken(), TAMBAHKAN PARAMETER ABILITIESNYA
             'user' => Auth::user(),
             'role' => Auth::user()->roles->pluck('name'),
         ], 200);

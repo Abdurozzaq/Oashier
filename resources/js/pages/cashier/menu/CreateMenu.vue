@@ -9,7 +9,7 @@
         <v-form @submit.prevent="createMenu">
           <v-card
             class=" mx-auto"
-            color="#26c6da"
+            color="primary"
             elevation="8"
           >
             <v-card-title>
@@ -45,7 +45,8 @@
                     <v-text-field
                       label="Menu Name"
                       single-line
-                      solo
+                      filled
+                      dark
                       required
                       :error-messages="menuNameErrors"
                       v-model="menu_name"
@@ -55,7 +56,8 @@
                     ></v-text-field>
 
                     <v-textarea
-                      solo
+                      filled
+                      dark
                       label="Menu Description"
                       v-model="menu_description"
                       :error-messages="menuDescriptionErrors"
@@ -66,7 +68,8 @@
                     <v-text-field
                       label="Menu Price"
                       single-line
-                      solo
+                      filled
+                      dark
                       v-model="menu_price"
                       :error-messages="menuPriceErrors"
                       @input="$v.menu_price.$touch()" 
@@ -76,7 +79,8 @@
                     <v-select
                       :items="menu_activate"
                       label="Set Menu To Be Active?"
-                      solo
+                      filled
+                      dark
                       v-model="menu_availability"
                       :error-messages="menuAvailabilityErrors"
                       @change="$v.menu_availability.$touch()" 
@@ -85,7 +89,8 @@
 
                     <v-file-input 
                       prepend-icon="mdi-camera" 
-                      solo 
+                      filled 
+                      dark
                       accept="image/*" 
                       label="Menu Picture"
                       v-model="menu_picture"
@@ -94,12 +99,13 @@
                       @blur="$v.menu_picture.$touch()"
                       ></v-file-input>
 
-                      <div class="text-caption mb-1">Optional</div>
+                      <div class="white--text text-caption mb-1">Optional</div>
 
                       <v-text-field
                       label="Set Initial Stock Quantity"
                       single-line
-                      solo
+                      filled
+                      dark
                       v-model="menu_stock_qty"
                       :error-messages="menuStockQtyErrors"
                       @input="$v.menu_stock_qty.$touch()" 

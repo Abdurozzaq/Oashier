@@ -16,8 +16,9 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->string('order_buyer_name');
+            $table->string('order_number');
             $table->string('order_note');
+            $table->boolean('is_cancelled')->default(false);
             $table->timestamps();
         });
     }

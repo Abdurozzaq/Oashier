@@ -62,7 +62,8 @@ Route::post('menu/stock/edit', 'Api\RestaurantMenu\RestaurantMenuController@edit
 Route::post('order/create', 'Api\Order\OrderController@createOrder')->middleware('jwt.verify');
 Route::post('order/edit', 'Api\Order\OrderController@editOrder')->middleware('jwt.verify');
 Route::get('order/list', 'Api\Order\OrderController@getOrderList')->middleware('jwt.verify');
-Route::post('order/delete/{id}', 'Api\Order\OrderController@deleteOrder')->middleware('jwt.verify');
+Route::get('order/order-number', 'Api\Order\OrderController@getOrderNumber')->middleware('jwt.verify');
+Route::post('order/cancel/{id}', 'Api\Order\OrderController@cancelOrder')->middleware('jwt.verify');
 
 /** 
  * Order 

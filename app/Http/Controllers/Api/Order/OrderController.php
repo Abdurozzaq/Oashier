@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Order;
+use App\OrderDetails;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -13,7 +15,7 @@ class OrderController extends Controller
   public function createOrder(Request $request) {
     $order = Order::create([
         'user_id' => Auth::user()->id,
-        'order_buyer_name' => $request->order_buyer_name,
+        'order_number' => $request->order_number,
         'order_note' => $request->order_note
     ]);
 
@@ -26,7 +28,7 @@ class OrderController extends Controller
 
   public function getOrderList() {
 
-    $data = Order::where('user_id', Auth::user()->id)->get();
+    $data = Order::where('user_id', Auth::user()->id)->where('is_cancelled', 0)->get();
 
     return response()->json([
         'status' => 'success',
@@ -35,17 +37,40 @@ class OrderController extends Controller
     ], 200);
   }
 
+  public function getOrderNumber() {
+
+
+
+    $today = Carbon::now()->toDateTimeString();
+
+    $theOrder = Order::where('user_id', Auth::user()->id)->whereDate('created_at', '=', date('Y-m-d'))->get();
+
+    if (count($theOrder) > 0) {
+      $order_number = count($theOrder) + 1;
+    } else {
+      $order_number = 1;
+    }
+
+
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'A Safe New Order Number Received Successfully',
+        'order_number' => $order_number
+    ], 200);
+  }
+
   public function editOrder(Request $request) {
 
     $this->validate($request, [
       'order_id' => 'required',
       'order_note' => 'required',
-      'order_buyer_name' => 'required',
+      'order_number' => 'required',
     ]);
 
     $order = Order::findOrFail($request->order_id);
     $order->order_note = $request->order_note;
-    $order->order_buyer_name = $request->order_buyer_name;
+    $order->order_number = $request->order_number;
     $order->save();
 
     return response()->json([
@@ -54,13 +79,16 @@ class OrderController extends Controller
     ], 200);
   }
 
-  public function deleteOrder($id) {
+  public function cancelOrder($id) {
+
+    // First Delete The Order From Orders Table
     $order = Order::findOrFail($id);
-    $order->delete();
+    $order->is_cancelled = 1;
+    $order->save();
 
     return response()->json([
       'status' => 'success',
-      'message' => 'Order Deleted Successfully',
+      'message' => 'Order Cancelled Successfully',
     ], 200);
   }
 }

@@ -63,3 +63,15 @@ dengan requirement nya order id.
 
 saat edit qty di added menu. masih blom ada validasi nya tambah aja terus kasih snackbar
 kalo error
+
+
+ketika tanggal berubah order id reset jadi 1 lagi
+
+cara nya yaitu dengan get tanggal sekarang dan 
+lihat dulu jika ada orderan yang sama tanggal nya.
+
+Jika ada tanggal yang sama dengan tanggal sekarang, count orderan itu ada berapa 
+lalu untuk inputan yang baru tinggal increment count orderan tadi
+
+Else, Jika tidak ada tanggal orderan yang sama dengan tanggal sekarang,
+maka start dari satu 1 untuk order id nya

@@ -168,6 +168,8 @@
                       v-model="props.item.quantity"
                       min="1"
                       :max="props.item.stock_qty"
+                      :thumb-size="24"
+                      thumb-label="always"
                     ></v-slider>
                   </template>
                 </v-edit-dialog>

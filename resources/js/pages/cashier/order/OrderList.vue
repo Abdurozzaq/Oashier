@@ -56,7 +56,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="deleteOrder(props.item)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="cancelOrder(props.item)">
                 <v-icon dark>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
@@ -93,7 +93,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="deleteOrder(props.item)">
+              <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="red" @click.prevent="cancelOrder(props.item)">
                 <v-icon dark>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
@@ -126,20 +126,8 @@
         </v-card-title>
 
         <v-card-text>
-          <v-text-field
-            class="mt-8"
-            label="Buyer Name"
-            single-line
-            filled
-            required
-            :error-messages="orderBuyerNameErrors"
-            v-model="order_buyer_name"
-            @input="$v.order_buyer_name.$touch()"
-            @blur="$v.order_buyer_name.$touch()"
-
-          ></v-text-field>
-
           <v-textarea
+            class="mt-10"
             filled
             label="Order Note"
             v-model="order_note"
@@ -209,7 +197,6 @@
         // Edit Order form
         editOrderDialog: false,
         order_note: null,
-        order_buyer_name: null,
         order_id: null,
         overlayOrderInformation: false,
         successEditOrderInfo: false,
@@ -223,10 +210,10 @@
         overlay: false,
         headers: [
           {
-            text: 'Buyer Name',
+            text: 'Order Number',
             align: 'start',
             sortable: true,
-            value: 'order_buyer_name',
+            value: 'order_number',
           },
           {
             text: 'Note',
@@ -245,9 +232,6 @@
       order_note: {
         required,
       },
-      order_buyer_name: {
-        required,
-      }
     }, // end of validations
 
     computed: {
@@ -258,14 +242,6 @@
         !currentObj.$v.order_note.required && errors.push('Order Note is required.')
         return errors
       },
-
-      orderBuyerNameErrors () {
-        let currentObj = this
-        const errors = []
-        if (!currentObj.$v.order_buyer_name.$dirty) return errors
-        !currentObj.$v.order_buyer_name.required && errors.push('Buyer Name is required.')
-        return errors
-      },
     },
 
     methods: {
@@ -274,7 +250,7 @@
 
         currentObj.order_id = item.id
         currentObj.order_note = item.order_note
-        currentObj.order_buyer_name = item.order_buyer_name
+        currentObj.order_number = item.order_number
         currentObj.editOrderDialog = true
       },
 
@@ -283,7 +259,7 @@
 
         currentObj.order_id = null
         currentObj.order_note = null
-        currentObj.order_buyer_name = null
+        currentObj.order_number= null
         currentObj.editOrderDialog = false
       },
 
@@ -297,7 +273,7 @@
           axios.post('api/order/edit', {
             order_id: currentObj.order_id,
             order_note: currentObj.order_note,
-            order_buyer_name: currentObj.order_buyer_name
+            order_number: currentObj.order_number
           })
             .then(function (response) {
               // after success show successSnackbar
@@ -318,9 +294,9 @@
             })
         }
       },
-      deleteOrder: function(order) {
+      cancelOrder: function(order) {
         let currentObj = this
-        axios.post('api/order/delete/' + order.id)
+        axios.post('api/order/cancel/' + order.id)
           .then(function (response) {
             if(currentObj.orderListFiltered) {
               currentObj.orderList.splice(currentObj.orderList.indexOf(order), 1);
@@ -368,7 +344,7 @@
         if (currentObj.search != null) {
           currentObj.orderListFiltered = currentObj.orderList.filter(
             order => order.order_note.toLowerCase().includes(currentObj.search.toLowerCase()) ||
-            order.order_buyer_name.toLowerCase().includes(currentObj.search.toLowerCase())
+            order.order_number.toLowerCase().includes(currentObj.search.toLowerCase())
           )
 
         } else {

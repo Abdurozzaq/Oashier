@@ -9,7 +9,7 @@
         <v-form @submit.prevent="createMenu">
           <v-card
             class=" mx-auto"
-            color="#26c6da"
+            color="primary"
             elevation="8"
           >
             <v-card-title>
@@ -41,22 +41,22 @@
                         </li>
                       </ul>
                     </v-alert>
-
+                    
                     <v-text-field
-                      label="Buyer Name"
-                      single-line
-                      solo
-                      required
-                      :error-messages="orderBuyerNameErrors"
-                      v-model="order_buyer_name"
-                      @input="$v.order_buyer_name.$touch()"
-                      @blur="$v.order_buyer_name.$touch()"
-
+                      :value="order_number"
+                      label="Order Number"
+                      hint="Auto Added"
+                      filled
+                      dark
+                      disabled
+                      style="max-width: 150px;"
                     ></v-text-field>
 
                     <v-textarea
-                      solo
+                      filled
+                      dark
                       label="Order Note"
+                      hint="Optional"
                       v-model="order_note"
                       :error-messages="orderNoteErrors"
                       @input="$v.order_note.$touch()"
@@ -136,7 +136,7 @@
       return {
         dialog: false,
         order_note: null,
-        order_buyer_name: null,
+        order_number: null,
 
 
         // Response
@@ -153,7 +153,7 @@
       order_note: {
         required,
       },
-      order_buyer_name: {
+      order_number: {
         required,
       }
     }, // end of validations
@@ -164,14 +164,6 @@
         const errors = []
         if (!currentObj.$v.order_note.$dirty) return errors
         !currentObj.$v.order_note.required && errors.push('Order Note is required.')
-        return errors
-      },
-
-      orderBuyerNameErrors () {
-        let currentObj = this
-        const errors = []
-        if (!currentObj.$v.order_buyer_name.$dirty) return errors
-        !currentObj.$v.order_buyer_name.required && errors.push('Buyer Name is required.')
         return errors
       },
     },
@@ -191,7 +183,7 @@
           currentObj.overlay = true
 
           axios.post('api/order/create', {
-            'order_buyer_name': currentObj.order_buyer_name,
+            'order_number': currentObj.order_number,
             'order_note': currentObj.order_note,
           })
             .then(function (response) {
@@ -218,8 +210,31 @@
             })
         }
       },
-    },
 
+      setOrderNumber: function() {
+        let currentObj = this
+
+        axios.get('api/order/order-number')
+          .then(function (response) {
+            
+            currentObj.order_number = response.data.order_number
+          })
+          .catch(function (error) {
+              currentObj.overlay = false
+              if(error.response) {
+                currentObj.serverError = error.response.data.errors
+                currentObj.errorAlert = true
+              }
+            })
+      }
+    }, // end of methods
+
+
+    mounted: function () {
+      let currentObj = this
+
+      currentObj.setOrderNumber()
+    }
 
   }
 </script>
