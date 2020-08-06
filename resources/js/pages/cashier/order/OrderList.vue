@@ -60,7 +60,7 @@
                 <v-icon dark>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
-            <span>Delete Order</span>
+            <span>Cancel Order</span>
           </v-tooltip>
 
         </template>

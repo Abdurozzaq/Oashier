@@ -62,6 +62,7 @@ Route::post('menu/stock/edit', 'Api\RestaurantMenu\RestaurantMenuController@edit
 Route::post('order/create', 'Api\Order\OrderController@createOrder')->middleware('jwt.verify');
 Route::post('order/edit', 'Api\Order\OrderController@editOrder')->middleware('jwt.verify');
 Route::get('order/list', 'Api\Order\OrderController@getOrderList')->middleware('jwt.verify');
+Route::get('order/cancelled/list', 'Api\Order\OrderController@getCancelledOrderList')->middleware('jwt.verify');
 Route::get('order/order-number', 'Api\Order\OrderController@getOrderNumber')->middleware('jwt.verify');
 Route::post('order/cancel/{id}', 'Api\Order\OrderController@cancelOrder')->middleware('jwt.verify');
 
@@ -72,4 +73,5 @@ Route::post('order/cancel/{id}', 'Api\Order\OrderController@cancelOrder')->middl
  */
 Route::post('order/details/create', 'Api\Order\OrderDetailsController@createOrderDetails')->middleware('jwt.verify');
 Route::post('order/details/list/{id}', 'Api\Order\OrderDetailsController@getOrderDetailsList')->middleware('jwt.verify');
+Route::get('order/cancelled/details/list/{id}', 'Api\Order\OrderDetailsController@getCancelledOrderDetailsList')->middleware('jwt.verify');
 Route::post('order/details/delete/{code}', 'Api\Order\OrderDetailsController@deleteMenuFromOrder')->middleware('jwt.verify');

@@ -22,6 +22,7 @@ import EditMenuPage from "./pages/cashier/menu/EditMenu.vue"
 import CreateOrderPage from "./pages/cashier/order/CreateOrder.vue"
 import EditOrderMenuPage from "./pages/cashier/order/EditMenu.vue"
 import OrderListPage from "./pages/cashier/order/OrderList.vue"
+import CancelledOrderListPage from "./pages/cashier/order/CancelledOrderList.vue"
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -224,6 +225,14 @@ export const routes = [
                 component: OrderListPage,
                 meta: {
                     title: 'Order List - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "order/cancelled/list",
+                component: CancelledOrderListPage,
+                meta: {
+                    title: 'Cancelled Order List - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
             }

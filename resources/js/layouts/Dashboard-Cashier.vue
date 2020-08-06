@@ -59,6 +59,16 @@
               <v-icon>mdi-note-text-outline</v-icon>
             </v-list-item-icon>
           </v-list-item>
+
+          <v-list-item
+            link
+            href="/home/order/cancelled/list"
+          >
+            <v-list-item-title>Cancelled Order List</v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-note-text</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
         </v-list-group>
 
         <v-list-group
@@ -89,15 +99,6 @@
             </v-list-item-icon>
           </v-list-item>
         </v-list-group>
-
-        <v-list-item
-          link
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-food</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Menu Stock</v-list-item-title>
-        </v-list-item>
 
       </v-list>
     </v-navigation-drawer>

@@ -37,6 +37,17 @@ class OrderController extends Controller
     ], 200);
   }
 
+  public function getCancelledOrderList() {
+
+    $data = Order::where('user_id', Auth::user()->id)->where('is_cancelled', 1)->get();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Cancelled Order Received Successfully',
+        'data' => $data
+    ], 200);
+  }
+
   public function getOrderNumber() {
 
 
