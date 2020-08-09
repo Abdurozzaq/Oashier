@@ -17,7 +17,7 @@
 
     <v-card>
       <v-card-title>
-      Your Order List
+      Your Cancelled Order List
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
@@ -37,7 +37,12 @@
         :items-per-page="5"
         class="elevation-1"
       >
-        <template v-slot:item.action="props">
+
+        <template v-slot:[`item.created_at`]="{ item }">
+          <span>{{ new Date(item.created_at).toLocaleString() }}</span>
+        </template>
+
+        <template v-slot:[`item.action`]="props">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" class="mx-2" fab dark small color="green" @click.prevent="seeMenuList(props.item)">
@@ -56,7 +61,12 @@
         :items-per-page="5"
         class="elevation-1"
       >
-        <template v-slot:item.action="props">
+
+        <template v-slot:[`item.created_at`]="{ item }">
+          <span>{{ new Date(item.created_at).toLocaleString() }}</span>
+        </template>
+
+        <template v-slot:[`item.action`]="props">
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -149,6 +159,7 @@
 <script>
   import { required, numeric } from 'vuelidate/lib/validators'
   import axios from 'axios'
+  import moment from 'moment';
   export default {
     data() {
       return {
@@ -175,7 +186,13 @@
           },
           {
             text: 'Note',
+            sortable: true,
             value: 'order_note'
+          },
+          {
+            text: 'Date & Time',
+            sortable: true,
+            value: 'created_at'
           },
           {
             text: 'Action',

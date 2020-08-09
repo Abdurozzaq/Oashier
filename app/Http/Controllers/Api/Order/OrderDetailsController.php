@@ -18,9 +18,49 @@ class OrderDetailsController extends Controller
         
         foreach ($data as $item) {
 
-            OrderDetails::updateOrCreate(['code' => $item['code']], $item);
-        
+            $od = OrderDetails::where('code', $item['code'])->first();
+
+            if ($od === null) {
+                OrderDetails::create([
+                    'order_id' => $item['order_id'],
+                    'menu_id' => $item['menu_id'],
+                    'menu_name' => $item['menu_name'],
+                    'code' => $item['code'],
+                    'quantity' => $item['quantity'],
+                    'one_unit_price' => $item['one_unit_price'],
+                    'total_price' => $item['total_price'],
+                ]);
+
+                $menu = RestaurantMenu::where('id', $item['menu_id'])->first();
+                $menu->menu_stock_qty = $menu->menu_stock_qty - $item['quantity'];
+                $menu->save();
+            }
+
+            if ($od !== null) {
+                if ($od->quantity < $item['quantity']) {
+                    $menu = RestaurantMenu::where('id', $item['menu_id'])->first();
+                    $difference = $item['quantity'] - $od->quantity;
+                    $menu->menu_stock_qty = $menu->menu_stock_qty - $difference;
+                    $menu->save();
+                }
+
+                if ($od->quantity > $item['quantity']) {
+                    $menu = RestaurantMenu::where('id', $item['menu_id'])->first();
+                    $difference = $od->quantity - $item['quantity'];
+                    $menu->menu_stock_qty = $menu->menu_stock_qty + $difference;
+                    $menu->save();
+                }
+
+                $od->quantity = $item['quantity'];
+                $od->save();
+            }
+
+            // OrderDetails::updateOrCreate(['code' => $item['code']], $item);
+            
         };
+
+
+
 
         return response()->json([
             'status' => 'success',
@@ -64,7 +104,13 @@ class OrderDetailsController extends Controller
     }
 
     public function deleteMenuFromOrder($code) {
-        $menu = OrderDetails::where('code', $code)->get()->each->delete();
+        $orderDetails = OrderDetails::where('code', $code)->first();
+
+        $menu = RestaurantMenu::where('id', $orderDetails->menu_id)->first();
+        $menu->menu_stock_qty = $menu->menu_stock_qty + $orderDetails->quantity;
+        $menu->save();
+
+        $orderDetails->delete();
     
         return response()->json([
           'status' => 'success',

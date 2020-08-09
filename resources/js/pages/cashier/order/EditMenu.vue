@@ -304,6 +304,7 @@ export default {
             currentObj.snack = true
             currentObj.snackColor = 'success'
             currentObj.snackText = 'Menu Has Been Removed From List'
+            currentObj.getMenu()
           })
           .catch(function (error) {
             currentObj.overlay = false
@@ -383,6 +384,7 @@ export default {
             currentObj.snackColor = 'success'
             currentObj.snackText = 'Menu Saved Succesfully'
             currentObj.overlayAddedMenu = false
+            currentObj.getMenu()
           })
           .catch(function (error) {
             currentObj.overlay = false

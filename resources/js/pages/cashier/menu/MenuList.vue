@@ -44,182 +44,199 @@
           </ul>
         </v-alert>
 
-        <div class="text-h6">Activated Menu</div>
-
-        <v-card class="mb-3" v-for="(ma, index) in activatedMenu" :key="'ma' + index">
-          <v-list>
-
-            <v-list-item color="#B3E5F">
-              <v-list-item-avatar size="62">
-                <v-avatar v-if="ma.menu_picture" size="62" color="primary">
-                  <v-img :src="ma.menu_picture"/>
-                </v-avatar>
-                <v-avatar v-else color="primary" size="62">
-                  <v-icon dark>mdi-food-fork-drink</v-icon>
-                </v-avatar>
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title>{{ ma.menu_name }}</v-list-item-title>
-                <v-list-item-subtitle>Rp{{ ma.menu_price }}</v-list-item-subtitle>
-              </v-list-item-content>
-
-              <v-list-item-action>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click.prevent="toMenuEdit(ma.id)"
-                    >
-                      <v-icon color="grey lighten-1">mdi-file-document-edit-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Edit Menu</span>
-                </v-tooltip>
-
-              </v-list-item-action>
-
-              <v-list-item-action>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="stockPrepare(ma)"
-                    >
-                      <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Edit Menu Stock</span>
-                </v-tooltip>
-
-              </v-list-item-action>
-
-              <v-list-item-action>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click.prevent="deleteMenu(ma.id)"
-                    >
-                      <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Delete Menu</span>
-                </v-tooltip>
-
-              </v-list-item-action>
-
-
-            </v-list-item>
-          </v-list>
-
-          <v-overlay
-            :absolute="true"
-            :value="overlay"
-          >
-            <v-progress-circular
-              :size="50"
-              color="white"
-              indeterminate
-            ></v-progress-circular>
-          </v-overlay>
-        </v-card>
-
         <br>
 
-        <div class="text-h6">Deactivated Menu</div>
+        <v-row>
+          <v-col cols="6">
+            <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">ACTIVATED MENU</div>
 
-        <v-card class="mb-3" v-for="(md, index) in deactivatedMenu" :key="'md' + index">
-          <v-list>
+            <v-banner v-if="menuList == null || menuList.length == 0 && activatedMenu == null || activatedMenu.length == 0">
+              There is no Activated Menu Available.</a>
+            </v-banner>
 
-            <v-list-item color="#B3E5F">
-              <v-list-item-avatar size="62">
-                <v-avatar size="62" color="primary">
-                  <v-img :src="md.menu_picture"/>
-                </v-avatar>
-              </v-list-item-avatar>
+            <v-card class="ma-2" v-for="(ma, index) in activatedMenu" :key="'ma' + index">
+              <v-list>
 
-              <v-list-item-content>
-                <v-list-item-title>{{ md.menu_name }}</v-list-item-title>
-                <v-list-item-subtitle>Rp{{ md.menu_price }}</v-list-item-subtitle>
-              </v-list-item-content>
+                <v-list-item color="#B3E5F">
+                  <v-list-item-avatar size="62">
+                    <v-avatar v-if="ma.menu_picture" size="62" color="primary">
+                      <v-img :src="ma.menu_picture"/>
+                    </v-avatar>
+                    <v-avatar v-else color="primary" size="62">
+                      <v-icon dark>mdi-food-fork-drink</v-icon>
+                    </v-avatar>
+                  </v-list-item-avatar>
 
-              <v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ ma.menu_name }}</v-list-item-title>
+                    <v-list-item-subtitle>Rp{{ ma.menu_price }}</v-list-item-subtitle>
+                  </v-list-item-content>
 
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click.prevent="toMenuEdit(md.id)"
-                    >
-                      <v-icon color="grey lighten-1">mdi-file-document-edit-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Edit Menu</span>
-                </v-tooltip>
+                  <v-list-item-action>
 
-              </v-list-item-action>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click.prevent="toMenuEdit(ma.id)"
+                        >
+                          <v-icon color="grey lighten-1">mdi-file-document-edit-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Edit Menu</span>
+                    </v-tooltip>
 
-              <v-list-item-action>
+                  </v-list-item-action>
 
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click="stockPrepare(md)"
-                    >
-                      <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Edit Menu Stock</span>
-                </v-tooltip>
+                  <v-list-item-action>
 
-              </v-list-item-action>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="stockPrepare(ma)"
+                        >
+                          <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Edit Menu Stock</span>
+                    </v-tooltip>
 
-              <v-list-item-action>
+                  </v-list-item-action>
 
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      icon
-                      v-bind="attrs"
-                      v-on="on"
-                      @click.prevent="deleteMenu(md.id)"
-                    >
-                      <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>Delete Menu</span>
-                </v-tooltip>
+                  <v-list-item-action>
 
-              </v-list-item-action>
-            </v-list-item>
-          </v-list>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click.prevent="deleteMenu(ma.id)"
+                        >
+                          <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Delete Menu</span>
+                    </v-tooltip>
 
-          <v-overlay
-            :absolute="true"
-            :value="overlay"
-          >
-            <v-progress-circular
-              :size="50"
-              color="white"
-              indeterminate
-            ></v-progress-circular>
-          </v-overlay>
-        </v-card>
+                  </v-list-item-action>
+
+
+                </v-list-item>
+              </v-list>
+
+              <v-overlay
+                :absolute="true"
+                :value="overlay"
+              >
+                <v-progress-circular
+                  :size="50"
+                  color="white"
+                  indeterminate
+                ></v-progress-circular>
+              </v-overlay>
+            </v-card>
+          </v-col>
+
+          <v-col cols="6">
+
+            <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">DEACTIVATED MENU</div>
+
+            <v-banner v-if="menuList == null || menuList.length == 0 && deactivatedMenu == null || deactivatedMenu.length == 0">
+              There is no Deactivated Menu Available.</a>
+            </v-banner>
+
+            <v-card class="ma-2" v-for="(md, index) in deactivatedMenu" :key="'md' + index">
+              <v-list>
+
+                <v-list-item color="#B3E5F">
+                  <v-list-item-avatar size="62">
+                    <v-avatar size="62" color="primary">
+                      <v-img :src="md.menu_picture"/>
+                    </v-avatar>
+                  </v-list-item-avatar>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ md.menu_name }}</v-list-item-title>
+                    <v-list-item-subtitle>Rp{{ md.menu_price }}</v-list-item-subtitle>
+                  </v-list-item-content>
+
+                  <v-list-item-action>
+
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click.prevent="toMenuEdit(md.id)"
+                        >
+                          <v-icon color="grey lighten-1">mdi-file-document-edit-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Edit Menu</span>
+                    </v-tooltip>
+
+                  </v-list-item-action>
+
+                  <v-list-item-action>
+
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click="stockPrepare(md)"
+                        >
+                          <v-icon color="grey lighten-1">mdi-circle-edit-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Edit Menu Stock</span>
+                    </v-tooltip>
+
+                  </v-list-item-action>
+
+                  <v-list-item-action>
+
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          v-bind="attrs"
+                          v-on="on"
+                          @click.prevent="deleteMenu(md.id)"
+                        >
+                          <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Delete Menu</span>
+                    </v-tooltip>
+
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list>
+
+              <v-overlay
+                :absolute="true"
+                :value="overlay"
+              >
+                <v-progress-circular
+                  :size="50"
+                  color="white"
+                  indeterminate
+                ></v-progress-circular>
+              </v-overlay>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        
 
 
       </v-col>
@@ -350,6 +367,8 @@
     name: 'CreateMenuPage',
     data() {
       return {
+        activeMenu: true,
+        unActiveMenu: true,
         dialog: false,
         stockDialog: false,
         menu_activate: [

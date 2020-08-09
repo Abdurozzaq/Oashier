@@ -27,6 +27,7 @@
     "dependencies": {
         "@supercharge/strings": "^1.11.0",
         "material-design-icons-iconfont": "^5.0.1",
+        "moment": "^2.27.0",
         "vue-axios": "^2.1.5",
         "vue-router": "^3.3.4",
         "vue-router-multiguard": "^1.0.3",

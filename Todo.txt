@@ -75,3 +75,14 @@ lalu untuk inputan yang baru tinggal increment count orderan tadi
 
 Else, Jika tidak ada tanggal orderan yang sama dengan tanggal sekarang,
 maka start dari satu 1 untuk order id nya
+
+
+ketika add menu ke order, kurangi stock jadi 1.
+ketika edit qty menu di order, kurangi stock sesuai dengan yang di masukan
+ketika edit qty menu di order dikurangi, tambah stock sesuai degna nyang dimasukan
+
+jika qty tambah, 
+
+
+
+
