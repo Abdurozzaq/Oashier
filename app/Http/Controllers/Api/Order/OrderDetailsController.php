@@ -42,6 +42,9 @@ class OrderDetailsController extends Controller
                     $difference = $item['quantity'] - $od->quantity;
                     $menu->menu_stock_qty = $menu->menu_stock_qty - $difference;
                     $menu->save();
+
+                    $od->total_price = $item['total_price'];
+                    $od->save();
                 }
 
                 if ($od->quantity > $item['quantity']) {
@@ -49,6 +52,9 @@ class OrderDetailsController extends Controller
                     $difference = $od->quantity - $item['quantity'];
                     $menu->menu_stock_qty = $menu->menu_stock_qty + $difference;
                     $menu->save();
+
+                    $od->total_price = $item['total_price'];
+                    $od->save();
                 }
 
                 $od->quantity = $item['quantity'];
