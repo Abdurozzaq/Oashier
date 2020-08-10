@@ -140,6 +140,7 @@
                     <div 
                       v-bind="attrs" 
                       v-on="on"
+                      @click="setMaxSlider(props.item.quantity)"
                     >
                       {{ props.item.quantity }} 
                       <v-icon>mdi-tooltip-edit-outline</v-icon>
@@ -153,8 +154,19 @@
                   </template>
                   <template v-slot:input>
                     <v-slider
+                    
                       class="mt-10"
-                      v-if="props.item.menu_stock_qty"
+                      v-if="maxSlider && props.item.menu_stock_qty == 0"
+                      v-model="props.item.quantity"
+                      min="1"
+                      :max="maxSlider"
+                      :thumb-size="24"
+                      thumb-label="always"
+                    ></v-slider>
+
+                    <v-slider
+                      class="mt-10"
+                      v-else-if="props.item.menu_stock_qty > 0"
                       v-model="props.item.quantity"
                       min="1"
                       :max="props.item.menu_stock_qty"
@@ -220,6 +232,7 @@ export default {
     data() {
         return {
           menuList: null,
+          maxSlider: null,
           search: null,
           loading: false,
           overlayAddedMenu: false,
@@ -231,17 +244,17 @@ export default {
           headers: [
             {
               text: 'Menu Name',
-              sortable: true,
+              sortable: false,
               value: 'menu_name',
             },
             {
               text: 'Menu Qty',
-              sortable: true,
+              sortable: false,
               value: 'quantity',
             },
             {
               text: 'Harga',
-              sortable: true,
+              sortable: false,
               value: 'total_price',
             },
             {
@@ -255,7 +268,14 @@ export default {
     },
 
     methods: {
-
+      setMaxSlider: function(qty) {
+        let currentObj = this
+        console.log(qty)
+        currentObj.maxSlider = qty
+        currentObj.snack = true
+        currentObj.snackColor = 'success'
+        currentObj.snackText = 'TEZST'
+      },
       stock: function(props) {
         let currentObj = this
 
