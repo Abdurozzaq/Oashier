@@ -132,15 +132,13 @@
                   persistent
                   @save="save(props.item)"
                   @cancel="cancel"
-                  @open="open"
-                  @close="close"
                 >
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <div 
                       v-bind="attrs" 
                       v-on="on"
-                      @click="setMaxSlider(props.item.quantity)"
+                      @click="setMaxSlider(props.item)"
                     >
                       {{ props.item.quantity }} 
                       <v-icon>mdi-tooltip-edit-outline</v-icon>
@@ -154,7 +152,6 @@
                   </template>
                   <template v-slot:input>
                     <v-slider
-                    
                       class="mt-10"
                       v-if="maxSlider && props.item.menu_stock_qty == 0"
                       v-model="props.item.quantity"
@@ -166,10 +163,10 @@
 
                     <v-slider
                       class="mt-10"
-                      v-else-if="props.item.menu_stock_qty > 0"
+                      v-else-if="maxSlider && props.item.menu_stock_qty > 0"
                       v-model="props.item.quantity"
                       min="1"
-                      :max="props.item.menu_stock_qty"
+                      :max="maxSlider"
                       :thumb-size="24"
                       thumb-label="always"
                     ></v-slider>
@@ -268,13 +265,10 @@ export default {
     },
 
     methods: {
-      setMaxSlider: function(qty) {
+      setMaxSlider: function(item) {
         let currentObj = this
-        console.log(qty)
-        currentObj.maxSlider = qty
-        currentObj.snack = true
-        currentObj.snackColor = 'success'
-        currentObj.snackText = 'TEZST'
+        console.log(item)
+        currentObj.maxSlider = parseInt(item.quantity) + parseInt(item.menu_stock_qty) 
       },
       stock: function(props) {
         let currentObj = this
@@ -293,6 +287,7 @@ export default {
             console.log('success edit qty')
           }
         })
+        currentObj.maxSlider = null
         currentObj.snack = true
         currentObj.snackColor = 'success'
         currentObj.snackText = 'Data Changed'
@@ -302,15 +297,6 @@ export default {
         currentObj.snack = true
         currentObj.snackColor = 'error'
         currentObj.snackText = 'Canceled'
-      },
-      open () {
-        let currentObj = this
-        currentObj.snack = true
-        currentObj.snackColor = 'info'
-        currentObj.snackText = 'Dialog opened'
-      },
-      close () {
-        console.log('Dialog closed')
       },
       removeMenuFromOrder: function(menu) {
         let currentObj = this
@@ -325,6 +311,7 @@ export default {
             currentObj.snackColor = 'success'
             currentObj.snackText = 'Menu Has Been Removed From List'
             currentObj.getMenu()
+            currentObj.getAddedMenu()
           })
           .catch(function (error) {
             currentObj.overlay = false
@@ -405,6 +392,7 @@ export default {
             currentObj.snackText = 'Menu Saved Succesfully'
             currentObj.overlayAddedMenu = false
             currentObj.getMenu()
+            currentObj.getAddedMenu()
           })
           .catch(function (error) {
             currentObj.overlay = false
