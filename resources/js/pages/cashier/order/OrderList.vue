@@ -107,7 +107,7 @@
                 <v-icon dark>mdi-trash-can-outline</v-icon>
               </v-btn>
             </template>
-            <span>Delete Order</span>
+            <span>Cancel Order</span>
           </v-tooltip>
 
         </template>
@@ -180,20 +180,14 @@
       </v-overlay>
     </v-dialog>
 
-    <v-snackbar
-      v-model="successEditOrderInfo"
-      :timeout="5000"
-      color="success"
-    >
-      Order Information has been Edited successfully from database.
-      <v-btn
-        color="white"
-        text
-        @click="successEditOrderInfo = false"
-      >
-        Close
-      </v-btn>
+    <v-snackbar top v-model="snack" :timeout="3000" :color="snackColor">
+      {{ snackText }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
+      </template>
     </v-snackbar>
+
   </div>
 </template>
 
@@ -203,6 +197,11 @@
   export default {
     data() {
       return {
+
+        // Snack Bar
+        snack: false,
+        snackColor: null,
+        snackText: null,
 
         // Edit Order form
         editOrderDialog: false,
@@ -285,7 +284,10 @@
 
         currentObj.overlayOrderInformation = true
         if (currentObj.$v.$invalid) {
-          currentObj.errorSnackbar = true
+          currentObj.snack = true
+          currentObj.snackColor = 'error'
+          currentObj.snackText = 'Input Data Invalid'
+          currentObj.overlayOrderInformation = false
         } else {
           axios.post('api/order/edit', {
             order_id: currentObj.order_id,
@@ -294,7 +296,9 @@
           })
             .then(function (response) {
               // after success show successSnackbar
-              currentObj.successEditOrderInfo = true
+              currentObj.snack = true
+              currentObj.snackColor = 'success'
+              currentObj.snackText = 'Order Information has been Edited successfully from database.'
               currentObj.overlayOrderInformation = false
               currentObj.editOrderCleanUpVar()
               currentObj.getData()
@@ -321,6 +325,9 @@
             } else {
               currentObj.orderList.splice(currentObj.orderList.indexOf(order), 1);
             }
+            currentObj.snack = true
+            currentObj.snackColor = 'success'
+            currentObj.snackText = 'Order Cancelled Successfully && Menu Stock On Order Returned Back.'
           })
           .catch(function (error) {
             if(error.response) {

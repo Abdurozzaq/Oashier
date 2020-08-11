@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Order;
 use App\OrderDetails;
+use App\RestaurantMenu;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -97,9 +98,17 @@ class OrderController extends Controller
     $order->is_cancelled = 1;
     $order->save();
 
+    $orderDetails = OrderDetails::where('order_id', $id)->get();
+
+    foreach ($orderDetails as $od) {
+      $menu = RestaurantMenu::where('id', $od->menu_id)->first();
+      $menu->menu_stock_qty = $menu->menu_stock_qty + $od->quantity;
+      $menu->save();
+    }
+
     return response()->json([
       'status' => 'success',
-      'message' => 'Order Cancelled Successfully',
+      'message' => 'Order Cancelled Successfully && Menu Stock On Order Returned Back.',
     ], 200);
   }
 }

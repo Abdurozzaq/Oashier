@@ -212,7 +212,7 @@
             </v-overlay>
           </v-card>
         </div>
-        <v-snackbar v-model="snack" :timeout="3000" :color="snackColor">
+        <v-snackbar top v-model="snack" :timeout="3000" :color="snackColor">
           {{ snackText }}
 
           <template v-slot:action="{ attrs }">
