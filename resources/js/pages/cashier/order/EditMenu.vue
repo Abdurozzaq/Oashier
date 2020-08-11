@@ -124,6 +124,7 @@
             <v-data-table
               :headers="headers"
               :items="addedMenu"
+              hide-default-footer
             >
               <template v-slot:item.quantity="props">
                 <v-edit-dialog
@@ -200,6 +201,9 @@
 
             </v-data-table>
 
+            <v-card-text>
+              <div class="d-flex justify-end text-h6 black--text font-weight-bold">TOTAL : {{ totalAllRp }}</div>
+            </v-card-text>
             <v-overlay
               :absolute="true"
               :value="overlayAddedMenu"
@@ -260,11 +264,32 @@ export default {
               sortable: false
             }
           ],
-          addedMenu: []
+          addedMenu: [],
+          totalAll: 0,
+          totalAllRp: 0,
       }
     },
 
     methods: {
+      setTotal: function() {
+        let currentObj = this
+        currentObj.totalAll = 0
+        if(currentObj.totalAll == 0) {
+          currentObj.addedMenu.forEach(function (menu) {
+
+            currentObj.totalAll = parseInt(currentObj.totalAll) + parseInt(menu.total_price)
+
+            currentObj.totalAllRp = new Intl.NumberFormat('id-ID', {
+                style:'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 2        
+            }).format(currentObj.totalAll);
+
+
+          })
+        } 
+        
+      },
       setMaxSlider: function(item) {
         let currentObj = this
         console.log(item)
@@ -288,6 +313,7 @@ export default {
           }
         })
         currentObj.maxSlider = null
+        currentObj.setTotal()
         currentObj.snack = true
         currentObj.snackColor = 'success'
         currentObj.snackText = 'Data Changed'
@@ -312,6 +338,7 @@ export default {
             currentObj.snackText = 'Menu Has Been Removed From List'
             currentObj.getMenu()
             currentObj.getAddedMenu()
+            currentObj.setTotal()
           })
           .catch(function (error) {
             currentObj.overlay = false
@@ -339,6 +366,7 @@ export default {
             'total_price': menu.menu_price,
             'stock_qty': menu.menu_stock_qty
           })
+          currentObj.setTotal()
         } else {
           var am = currentObj.addedMenu.filter(am => am.menu_id == menu.id)
           
@@ -353,6 +381,7 @@ export default {
               'total_price': menu.menu_price,
               'stock_qty': menu.menu_stock_qty
             })
+            currentObj.setTotal()
           } else {
             currentObj.snack = true
             currentObj.snackColor = 'error'
@@ -377,6 +406,7 @@ export default {
           .then(function (response) {
             currentObj.addedMenu = response.data.menu || []
             currentObj.overlayAddedMenu = false
+            currentObj.setTotal()
           })
         
       },
