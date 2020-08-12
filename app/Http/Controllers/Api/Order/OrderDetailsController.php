@@ -109,6 +109,26 @@ class OrderDetailsController extends Controller
         ], 200);
     }
 
+    public function getSuccessOrderDetailsList($id) {
+
+        $menus = DB::table('order_details')
+                    ->where('order_id', $id)
+                    ->get();
+
+        $total_price_all = 0;        
+
+        foreach ($menus as $menu) {
+            $total_price_all = $total_price_all + $menu->total_price;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order Details Received Successfully',
+            'menu' => $menus,
+            'total' => $total_price_all
+        ], 200);
+    }
+
     public function deleteMenuFromOrder($code) {
         $orderDetails = OrderDetails::where('code', $code)->first();
 

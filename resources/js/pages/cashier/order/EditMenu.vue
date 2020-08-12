@@ -126,7 +126,7 @@
               :items="addedMenu"
               hide-default-footer
             >
-              <template v-slot:item.quantity="props">
+              <template v-slot:[`item.quantity`]="props">
                 <v-edit-dialog
                   :return-value.sync="props.item.quantity"
                   large
@@ -151,7 +151,7 @@
                   <template v-slot:input>
                     <div class="mt-4 title">Update Quantity</div>
                   </template>
-                  <template v-slot:input>
+                  <template v-slot:[`input`]>
                     <v-slider
                       class="mt-10"
                       v-if="maxSlider && props.item.menu_stock_qty == 0"
@@ -186,7 +186,7 @@
               </template>
 
 
-              <template v-slot:item.action="props">
+              <template v-slot:[`item.action`]="props">
         
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">

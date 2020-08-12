@@ -69,6 +69,16 @@
               <v-icon>mdi-note-text</v-icon>
             </v-list-item-icon>
           </v-list-item>
+
+          <v-list-item
+            link
+            href="/home/order/successed/list"
+          >
+            <v-list-item-title>Successed Order List</v-list-item-title>
+            <v-list-item-icon>
+              <v-icon>mdi-clipboard-check</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
         </v-list-group>
 
         <v-list-group

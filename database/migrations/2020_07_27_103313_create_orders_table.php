@@ -19,6 +19,7 @@ class CreateOrdersTable extends Migration
             $table->string('order_number');
             $table->string('order_note');
             $table->boolean('is_cancelled')->default(false);
+            $table->boolean('is_paid')->default(false);
             $table->timestamps();
         });
     }

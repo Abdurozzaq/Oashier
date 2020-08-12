@@ -29,7 +29,7 @@ class OrderController extends Controller
 
   public function getOrderList() {
 
-    $data = Order::where('user_id', Auth::user()->id)->where('is_cancelled', 0)->get();
+    $data = Order::where('user_id', Auth::user()->id)->where('is_cancelled', 0)->where('is_paid', 0)->get();
 
     return response()->json([
         'status' => 'success',
@@ -45,6 +45,17 @@ class OrderController extends Controller
     return response()->json([
         'status' => 'success',
         'message' => 'Cancelled Order Received Successfully',
+        'data' => $data
+    ], 200);
+  }
+
+  public function getSuccessOrderList() {
+
+    $data = Order::where('user_id', Auth::user()->id)->where('is_paid', 1)->get();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Successed Order Received Successfully',
         'data' => $data
     ], 200);
   }

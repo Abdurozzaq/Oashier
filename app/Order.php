@@ -12,7 +12,8 @@ class Order extends Model
         'user_id',
         'order_number',
         'order_note',
-        'is_cancelled'
+        'is_cancelled',
+        'is_paid'
     ];
 
 }
