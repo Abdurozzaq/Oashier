@@ -25,6 +25,8 @@ class UsersTableSeeder extends Seeder
         User::create([
             'first_name' =>'User',
             'last_name' =>'User',
+            'restaurant_name' => 'Warung Sari Rasa',
+            'address' => 'Jl. Sentul No. 57, Curug Kulon, Curug, Kab. Tangerang, Banten 15810',
             'email' => 'user@gmail.com',
             'password' => Hash::make('password'),
             'email_verified_at' => $date

@@ -25,7 +25,7 @@ class OrderController extends Controller
         'message' => 'Order Created Successfully',
         'id' => $order->id
     ], 200);
-}
+  }
 
   public function getOrderList() {
 
@@ -120,6 +120,25 @@ class OrderController extends Controller
     return response()->json([
       'status' => 'success',
       'message' => 'Order Cancelled Successfully && Menu Stock On Order Returned Back.',
+    ], 200);
+  }
+
+  public function payCash(Request $request, $id) {
+
+    $this->validate($request, [
+      'customerNominal' => 'required',
+      'changeMoney' => 'required',
+    ]);
+
+    $order = Order::findOrFail($id);
+    $order->is_paid = 1;
+    $order->customer_nominal = $request->customerNominal;
+    $order->change_money = $request->changeMoney;
+    $order->save();
+
+    return response()->json([
+      'status' => 'success',
+      'message' => 'Order Transaction has been Successful.',
     ], 200);
   }
 }

@@ -66,6 +66,7 @@ Route::get('order/cancelled/list', 'Api\Order\OrderController@getCancelledOrderL
 Route::get('order/successed/list', 'Api\Order\OrderController@getSuccessOrderList')->middleware('jwt.verify');
 Route::get('order/order-number', 'Api\Order\OrderController@getOrderNumber')->middleware('jwt.verify');
 Route::post('order/cancel/{id}', 'Api\Order\OrderController@cancelOrder')->middleware('jwt.verify');
+Route::post('order/pay/cash/{id}', 'Api\Order\OrderController@payCash')->middleware('jwt.verify');
 
 /** 
  * Order 

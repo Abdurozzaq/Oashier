@@ -12,6 +12,8 @@ class Order extends Model
         'user_id',
         'order_number',
         'order_note',
+        'customer_nominal',
+        'change_money',
         'is_cancelled',
         'is_paid'
     ];

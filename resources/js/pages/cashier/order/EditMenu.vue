@@ -120,6 +120,15 @@
                 Save
                 <v-icon right dark>mdi-send</v-icon>
               </v-btn>
+              <v-btn
+                :disabled="addedMenu.length == 0"
+                color="teal lighten-1"
+                class="ma-2 white--text"
+                @click.prevent="preparePayCash()"
+              >
+                Pay
+                <v-icon right dark>mdi-currency-usd</v-icon>
+              </v-btn>
             </v-card-title>
             <v-data-table
               :headers="headers"
@@ -223,12 +232,84 @@
             <v-btn v-bind="attrs" text @click="snack = false">Close</v-btn>
           </template>
         </v-snackbar>
+
+      <!-- Pay Dialog -->
+      <v-dialog v-model="payCashDialog" persistent max-width="290">
+        <v-card>
+          <v-card-title class="headline">Pay Cash</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="mt-3 d-flex justify-center text-h6">{{ totalAllRp }}</v-card-text>
+          <v-card-text>Enter the nominal customer money, which is given.</v-card-text>
+          <v-card-text>
+            <v-text-field
+              label="Enter Nominal"
+              hint="No punctuation | Hanya Angka"
+              persistent-hint
+              filled
+              v-model="customerNominal"
+              :error-messages="customerNominalErrors"
+              @input="$v.customerNominal.$touch()"
+              @blur="$v.customerNominal.$touch()"
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" text @click="payCashDialog = false">Cancel</v-btn>
+            <v-btn color="green darken-1" text @click="payCash">Pay Now</v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-overlay
+          :absolute="true"
+          :value="overlayPayFormDialog"
+        >
+          <v-progress-circular
+            :size="50"
+            color="white"
+            indeterminate
+          ></v-progress-circular>
+        </v-overlay>
+      </v-dialog>
+
+      <!-- Receipt Dialog -->
+      <v-dialog v-model="receiptDialog" persistent max-width="290">
+        <v-card>
+          <v-card-title class="headline">Pay Cash</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="mt-3 d-flex justify-center">
+            <img
+              class="mt-3"
+              style="height: 64px;"
+              src="/statics/success-icon.png"
+            />
+          </v-card-text>
+          <v-card-text class="d-flex justify-center">Transaction has been successful!</v-card-text>
+          <v-card-text  class="mt-3 d-flex justify-center text-h6">Change Money :</v-card-text>
+          <v-card-text  class="d-flex justify-center text-h6">{{ changeMoneyRp }}</v-card-text>
+          <v-card-text>Print Receipt?</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red darken-1" text @click="successRedirect()">No</v-btn>
+            <v-btn color="green darken-1" text>Print Receipt</v-btn>
+          </v-card-actions>
+        </v-card>
+        <v-overlay
+          :absolute="true"
+          :value="overlayPayFormDialog"
+        >
+          <v-progress-circular
+            :size="50"
+            color="white"
+            indeterminate
+          ></v-progress-circular>
+        </v-overlay>
+      </v-dialog>
     </div>
 </template>
 
 <script>
 const Str = require('@supercharge/strings')
 import axios from 'axios'
+import { required, numeric } from 'vuelidate/lib/validators'
 export default {
     data() {
         return {
@@ -267,10 +348,85 @@ export default {
           addedMenu: [],
           totalAll: 0,
           totalAllRp: 0,
+          payCashDialog: false,
+          customerNominal: null,
+          overlayPayFormDialog: false,
+          receiptDialog: false,
+          changeMoney: null,
+          changeMoneyRp: null,
       }
     },
 
+    validations: {
+      customerNominal: {
+        required,
+        numeric
+      },
+    }, // end of validations
+
+    computed: {
+      customerNominalErrors () {
+        let currentObj = this
+        const errors = []
+        if (!currentObj.$v.customerNominal.$dirty) return errors
+        !currentObj.$v.customerNominal.required && errors.push('Nominal is required.')
+        !currentObj.$v.customerNominal.numeric && errors.push('Nominal is must be an numeric.')
+        return errors
+      },
+    }, // end of computed
+
     methods: {
+      successRedirect: function() {
+        let currentObj = this
+        currentObj.receiptDialog = false
+        currentObj.$router.push({ path: '/home/order/successed/list'})
+      },
+      payCash: function () {
+        let currentObj = this
+
+        let order_id = currentObj.$route.query.id
+
+        currentObj.overlayPayFormDialog = true
+        
+        currentObj.changeMoney = parseInt(currentObj.customerNominal) - parseInt(currentObj.totalAll) 
+        
+        currentObj.changeMoneyRp = new Intl.NumberFormat('id-ID', {
+          style:'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 2        
+        }).format(currentObj.changeMoney);
+
+        if (currentObj.changeMoney) {
+          axios.post('api/order/pay/cash/' + order_id, {
+            customerNominal: currentObj.customerNominal,
+            changeMoney: currentObj.changeMoney
+          })
+          .then(function (response) {
+            currentObj.receiptDialog = true
+            currentObj.payCashDialog = false
+            currentObj.overlayPayFormDialog = false
+
+            currentObj.snack = true
+            currentObj.snackColor = 'success'
+            currentObj.snackText = 'Order has been successfully Paid'
+          })
+          .catch(function (error) {
+            currentObj.overlay = false
+            if(error.response) {
+              currentObj.serverError = error.response.data.errors
+              currentObj.errorAlert = true
+            }
+
+            currentObj.overlayPayFormDialog = false
+          })
+        }
+        
+      },
+      preparePayCash: function() {
+        let currentObj = this
+        currentObj.saveAddedMenu()
+        currentObj.payCashDialog = true
+      },
       setTotal: function() {
         let currentObj = this
         currentObj.totalAll = 0
