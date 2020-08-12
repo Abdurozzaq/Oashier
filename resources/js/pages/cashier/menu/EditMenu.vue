@@ -9,7 +9,7 @@
         <v-form @submit.prevent="editMenu">
           <v-card
             class=" mx-auto"
-            color="#26c6da"
+            color="#5B86E5"
             elevation="8"
           >
             <v-card-title>

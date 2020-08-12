@@ -2,7 +2,7 @@
   <v-app id="inspire">
     <v-navigation-drawer
       dark
-      src="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg"
+      color="#5B86E5"
       v-model="drawer"
       :clipped="$vuetify.breakpoint.lgAndUp"
       app
@@ -12,11 +12,11 @@
       <template v-slot:prepend>
         <v-list-item two-line>
           <v-list-item-avatar>
-            <img src="https://randomuser.me/api/portraits/women/81.jpg">
+            <v-icon>mdi-face</v-icon>
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>Sari Wardani</v-list-item-title>
+            <v-list-item-title>{{ firstName }} {{ lastName }}</v-list-item-title>
             <v-list-item-subtitle>Logged In</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -118,6 +118,7 @@
       app
       color="blue darken-3"
       dark
+      src="/statics/gradient.jpg"
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title
@@ -126,14 +127,6 @@
       >
         <span class="hidden-sm-and-down">OASHIER</span>
       </v-toolbar-title>
-      <v-text-field
-        flat
-        solo-inverted
-        hide-details
-        prepend-inner-icon="mdi-magnify"
-        label="Search"
-        class="hidden-sm-and-down"
-      ></v-text-field>
       <v-spacer></v-spacer>
       <v-btn icon>
         <v-icon>mdi-apps</v-icon>
@@ -170,21 +163,21 @@
           <v-list>
             <v-list-item>
               <v-list-item-avatar>
-                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John">
+                <v-icon size="40">mdi-face</v-icon>
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title>Sari Wardani</v-list-item-title>
-                <v-list-item-subtitle>Founder of Warung Sari Rasa</v-list-item-subtitle>
+                <v-list-item-title>{{ firstName }} {{ lastName }}</v-list-item-title>
+                <v-list-item-subtitle>Logged In</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
 
           <v-divider></v-divider>
 
-          <v-list shaped dense>
+          <v-list dense>
             <v-subheader>Account</v-subheader>
-            <v-list-item-group v-model="itemPopup" color="primary">
+            <v-list-item-group color="primary">
               <v-list-item
                 v-for="(ip, i) in itemsPopup"
                 :key="i"
@@ -227,6 +220,8 @@
       source: String,
     },
     data: () => ({
+      firstName: null,
+      lastName: null,
       fav: true,
       menu: false,
       message: false,
@@ -261,7 +256,29 @@
           .catch(function (error) {
             console.log(error);
           });
+      },
+
+      getMe: function() {
+        let currentObj = this
+        axios.get('api/auth/me')
+          .then(function (response) {
+
+            currentObj.firstName = response.data.user.first_name || 'FirstName'
+            currentObj.lastName = response.data.user.last_name || 'LastName'
+          })
+          .catch(function (error) {
+            if(error.response) {
+              console.log(error.response.data.errors)
+            }
+          })
       }
+
+    }, // End of Methods
+
+    mounted: function() {
+      let currentObj = this
+
+      currentObj.getMe()
     }
   }
 </script>
