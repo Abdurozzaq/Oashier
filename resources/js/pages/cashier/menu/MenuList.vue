@@ -47,14 +47,20 @@
         <br>
 
         <v-row>
-          <v-col cols="6">
-            <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">ACTIVATED MENU</div>
+          <v-col xs="12" sm="12" md="6">
+            <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">
+              ACTIVATED MENU
+              <v-btn @click="activeMenu = !activeMenu" icon color="grey">
+                <v-icon v-if="activeMenu">mdi-arrow-down-drop-circle-outline</v-icon>
+                <v-icon v-else>mdi-arrow-up-drop-circle-outline</v-icon>
+              </v-btn>
+            </div>
 
             <v-banner v-if="menuList == null || menuList.length == 0 && activatedMenu == null || activatedMenu.length == 0">
               There is no Activated Menu Available.</a>
             </v-banner>
 
-            <v-card class="ma-2" v-for="(ma, index) in activatedMenu" :key="'ma' + index">
+            <v-card v-if="activeMenu" class="ma-2" v-for="(ma, index) in activatedMenu" :key="'ma' + index">
               <v-list>
 
                 <v-list-item color="#B3E5F">
@@ -143,21 +149,30 @@
             </v-card>
           </v-col>
 
-          <v-col cols="6">
+          <v-col xs="12" sm="12" md="6">
 
-            <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">DEACTIVATED MENU</div>
+            <div class="text-h6 font-weight-bold blue-grey--text text--lighten-1 mb-5">
+              DEACTIVATED MENU
+              <v-btn @click="unActiveMenu = !unActiveMenu" icon color="grey">
+                <v-icon v-if="unActiveMenu">mdi-arrow-down-drop-circle-outline</v-icon>
+                <v-icon v-else>mdi-arrow-up-drop-circle-outline</v-icon>
+              </v-btn>
+            </div>
 
             <v-banner v-if="menuList == null || menuList.length == 0 && deactivatedMenu == null || deactivatedMenu.length == 0">
               There is no Deactivated Menu Available.</a>
             </v-banner>
 
-            <v-card class="ma-2" v-for="(md, index) in deactivatedMenu" :key="'md' + index">
+            <v-card v-if="unActiveMenu" class="ma-2" v-for="(md, index) in deactivatedMenu" :key="'md' + index">
               <v-list>
 
                 <v-list-item color="#B3E5F">
                   <v-list-item-avatar size="62">
-                    <v-avatar size="62" color="primary">
+                    <v-avatar v-if="md.menu_picture" size="62" color="pridry">
                       <v-img :src="md.menu_picture"/>
+                    </v-avatar>
+                    <v-avatar v-else color="primary" size="62">
+                      <v-icon dark>mdi-food-fork-drink</v-icon>
                     </v-avatar>
                   </v-list-item-avatar>
 
