@@ -80,7 +80,7 @@
               <div>
                 <v-card-text>
                   <div class="text-h3">{{ totalAllOrder }}</div>
-                  <div class="text-subtitle1">Total Orders</div>
+                  <div class="text-subtitle1">Unpaid Orders</div>
                 </v-card-text>
               </div>
 
@@ -89,7 +89,7 @@
                 size="125"
                 tile
               >
-                <v-img src="/statics/list-icon.png"></v-img>
+                <v-img src="/statics/order-list-icon.png"></v-img>
               </v-avatar>
             </div>
           </v-card>

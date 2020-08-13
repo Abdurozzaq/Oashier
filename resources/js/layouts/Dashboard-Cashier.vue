@@ -25,6 +25,7 @@
       <v-list>
         <v-list-item
           link
+          href="/home"
         >
           <v-list-item-icon>
             <v-icon>mdi-view-dashboard-outline</v-icon>
