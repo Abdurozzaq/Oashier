@@ -148,14 +148,7 @@
             large
             v-on="on"
           >
-            <v-avatar
-              size="32px"
-              item
-            >
-              <v-img
-                src="https://cdn.vuetifyjs.com/images/logos/logo.svg"
-                alt="Vuetify"
-              ></v-img></v-avatar>
+            <v-icon>mdi-face</v-icon>
           </v-btn>
         </template>
 
@@ -232,16 +225,12 @@
       itemPopup: 1,
       itemsPopup: [
         { text: 'Home', icon: 'mdi-view-dashboard', url: '/home' },
-        { text: 'Settings', icon: 'mdi-account', url: '/settings' },
-      ],
-
-      items: [
-        ['mdi-view-dashboard', 'Home', '/home'],
-        ['mdi-account', 'Settings', '/settings'],
+        { text: 'Change Identity', icon: 'mdi-account', url: '/home/settings/identity' },
+        { text: 'Change Password', icon: 'mdi-account-key', url: '/home/settings/password' },
       ],
 
       sidebar: [
-        { icon: 'mdi-view-dashboard', text: 'Home', link: '/' },
+        { icon: 'mdi-view-dashboard', text: 'Home', link: '/home' },
       ],
     }), // end of data
 
