@@ -24,6 +24,7 @@ import EditOrderMenuPage from "./pages/cashier/order/EditMenu.vue"
 import OrderListPage from "./pages/cashier/order/OrderList.vue"
 import CancelledOrderListPage from "./pages/cashier/order/CancelledOrderList.vue"
 import SuccessedOrderListPage from "./pages/cashier/order/SuccessedOrderList.vue"
+import IdentitySettingsPage from "./pages/cashier/settings/IdentitySettings.vue"
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -31,8 +32,6 @@ const token = localStorage.getItem('userToken')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer' + ' ' + token
 }
-
-console.log('route' + " " + token)
 
 /**
  *
@@ -242,6 +241,14 @@ export const routes = [
                 component: SuccessedOrderListPage,
                 meta: {
                     title: 'Successed Order List - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "settings/identity",
+                component: IdentitySettingsPage,
+                meta: {
+                    title: 'Identity Setting - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
             }
