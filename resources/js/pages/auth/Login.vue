@@ -155,12 +155,25 @@
             currentObj.overlay = false
 
             // after all success redirect to home
-            if (response.data.role == 'admin') {
-              currentObj.$router.push('/siAdmino')
-            } else {
-              currentObj.$router.push('/home')
-            }
-            
+            axios.get('api/auth/me', {
+              headers: {
+                Authorization: 'Bearer ' + token,
+                withCredentials: true //the token is a variable which holds the token
+              }
+              })
+              .then(function (response) {
+                  // handle success
+                  let userRole = response.data.role
+                  if (userRole == "admin") {
+                    currentObj.$router.push('/siAdmino')
+                  } else {
+                    currentObj.$router.push('/home')
+                  }
+              })
+              .catch(function (error) {
+                  // handle error
+                  console.log(error);
+              })
 
 
           })

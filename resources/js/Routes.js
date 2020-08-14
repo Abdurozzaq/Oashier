@@ -13,7 +13,7 @@ import ResetPassword from "./pages/auth/ResetPassword.vue"
 import ResendVerificationMail from "./pages/auth/ResendVerificationMail.vue"
 import RedirectAfterVerify from "./pages/auth/RedirectAfterVerify.vue"
 
-
+// FOr Cashier
 import LandingPage from "./pages/LandingPage.vue"
 import CashierHomePage from "./pages/cashier/HomePage.vue"
 import CreateMenuPage from "./pages/cashier/menu/CreateMenu.vue"
@@ -26,6 +26,11 @@ import CancelledOrderListPage from "./pages/cashier/order/CancelledOrderList.vue
 import SuccessedOrderListPage from "./pages/cashier/order/SuccessedOrderList.vue"
 import IdentitySettingsPage from "./pages/cashier/settings/IdentitySettings.vue"
 import PasswordSettingPage from "./pages/cashier/settings/PasswordSetting.vue"
+
+// For Admin
+import AdminIdentitySettingsPage from "./pages/admin/settings/IdentitySettings.vue"
+import AdminPasswordSettingPage from "./pages/admin/settings/PasswordSetting.vue"
+
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -272,6 +277,22 @@ export const routes = [
                 component: Component,
                 beforeEnter: multiguard([ifAuthenticated, adminOnly, verifiedEmail]),
             },
+            {
+                path: "settings/identity",
+                component: AdminIdentitySettingsPage,
+                meta: {
+                    title: 'Identity Setting - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, adminOnly, verifiedEmail]),
+            },
+            {
+                path: "settings/password",
+                component: AdminPasswordSettingPage,
+                meta: {
+                    title: 'Change Password - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, adminOnly, verifiedEmail]),
+            }
         ]
     },
 

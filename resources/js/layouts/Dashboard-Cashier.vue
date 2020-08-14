@@ -35,7 +35,7 @@
 
         <v-list-group
           prepend-icon="mdi-note-text-outline"
-          value="true"
+          value
         >
           <template v-slot:activator>
             <v-list-item-title>Order</v-list-item-title>
@@ -84,7 +84,7 @@
 
         <v-list-group
           prepend-icon="mdi-food"
-          value="true"
+          value
         >
           <template v-slot:activator>
             <v-list-item-title>Menu</v-list-item-title>
@@ -129,14 +129,6 @@
         <span class="hidden-sm-and-down">OASHIER</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
-        <v-icon>mdi-apps</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-bell</v-icon>
-      </v-btn>
-
-
       <v-menu
         v-model="menu"
         :close-on-content-click="false"
