@@ -40,7 +40,8 @@ Route::group([
     Route::post('refresh', 'Api\Auth\AuthController@refresh');
 
     Route::get('me', 'Api\Auth\AuthController@me')->middleware('jwt.verify');
-    Route::post('profile/identity/edit', 'Api\Setting\IdentityController@editIdentity')->middleware('jwt.verify');
+    Route::post('profile/identity/edit', 'Api\Setting\SettingsController@editIdentity')->middleware('jwt.verify');
+    Route::post('profile/password/edit', 'Api\Setting\SettingsController@changePassword')->middleware('jwt.verify');
 });
 
 

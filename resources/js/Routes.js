@@ -25,6 +25,7 @@ import OrderListPage from "./pages/cashier/order/OrderList.vue"
 import CancelledOrderListPage from "./pages/cashier/order/CancelledOrderList.vue"
 import SuccessedOrderListPage from "./pages/cashier/order/SuccessedOrderList.vue"
 import IdentitySettingsPage from "./pages/cashier/settings/IdentitySettings.vue"
+import PasswordSettingPage from "./pages/cashier/settings/PasswordSetting.vue"
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -249,6 +250,14 @@ export const routes = [
                 component: IdentitySettingsPage,
                 meta: {
                     title: 'Identity Setting - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
+            },
+            {
+                path: "settings/password",
+                component: PasswordSettingPage,
+                meta: {
+                    title: 'Change Password - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, userOnly, verifiedEmail]),
             }
