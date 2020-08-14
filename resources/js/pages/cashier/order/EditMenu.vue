@@ -83,6 +83,7 @@
                         color="deep-purple lighten-2"
                         text
                         @click.prevent="addMenuToOrder(menu)"
+                        :disabled="menu.menu_stock_qty == 0"
                       >
                         Add To Order
                       </v-btn>
@@ -285,11 +286,12 @@
           <v-card-text class="d-flex justify-center">Transaction has been successful!</v-card-text>
           <v-card-text  class="mt-3 d-flex justify-center text-h6">Change Money :</v-card-text>
           <v-card-text  class="d-flex justify-center text-h6">{{ changeMoneyRp }}</v-card-text>
-          <v-card-text>Print Receipt?</v-card-text>
+          <!-- <v-card-text>Print Receipt?</v-card-text> -->
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="red darken-1" text @click="successRedirect()">No</v-btn>
-            <v-btn color="green darken-1" text>Print Receipt</v-btn>
+            <v-btn color="red darken-1" text @click="successRedirect()">Ok, Thanks!</v-btn>
+            <!-- <v-btn color="red darken-1" text @click="successRedirect()">No</v-btn> -->
+            <!-- <v-btn color="green darken-1" text>Print Receipt</v-btn> -->
           </v-card-actions>
         </v-card>
         <v-overlay
