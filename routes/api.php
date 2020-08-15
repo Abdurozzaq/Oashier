@@ -80,3 +80,11 @@ Route::post('order/details/list/{id}', 'Api\Order\OrderDetailsController@getOrde
 Route::get('order/cancelled/details/list/{id}', 'Api\Order\OrderDetailsController@getCancelledOrderDetailsList')->middleware('jwt.verify');
 Route::get('order/successed/details/list/{id}', 'Api\Order\OrderDetailsController@getSuccessOrderDetailsList')->middleware('jwt.verify');
 Route::post('order/details/delete/{code}', 'Api\Order\OrderDetailsController@deleteMenuFromOrder')->middleware('jwt.verify');
+
+
+/**
+ * Admin
+ * Users Management
+ * Routes
+ */   
+Route::post('siAdmino/users/create', 'Api\User\UserController@createUser')->middleware('jwt.verify');

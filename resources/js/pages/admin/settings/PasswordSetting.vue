@@ -140,20 +140,20 @@
         }, // End of Validations
 
         computed: {
-            passwordErrors () {
-                let currentObj = this
-                const errors = []
-                if (!currentObj.$v.password.$dirty) return errors
-                !currentObj.$v.password.required && errors.push('New Password is required.')
-                return errors
-            },
-            passwordConfirmationErrors () {
-                let currentObj = this
-                const errors = []
-                if (!currentObj.$v.password_confirmation.$dirty) return errors
-                !currentObj.$v.password_confirmation.required && errors.push('Password Confirmation is required.')
-                return errors
-            },
+          passwordErrors () {
+              let currentObj = this
+              const errors = []
+              if (!currentObj.$v.password.$dirty) return errors
+              !currentObj.$v.password.required && errors.push('New Password is required.')
+              return errors
+          },
+          passwordConfirmationErrors () {
+              let currentObj = this
+              const errors = []
+              if (!currentObj.$v.password_confirmation.$dirty) return errors
+              !currentObj.$v.password_confirmation.required && errors.push('Password Confirmation is required.')
+              return errors
+          },
         }, // End of Computed
 
         methods: {  
