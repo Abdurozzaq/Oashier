@@ -88,3 +88,8 @@ Route::post('order/details/delete/{code}', 'Api\Order\OrderDetailsController@del
  * Routes
  */   
 Route::post('siAdmino/users/create', 'Api\User\UserController@createUser')->middleware('jwt.verify');
+// Cashier
+Route::get('siAdmino/users/cashier/list', 'Api\User\UserController@getCashierUsers')->middleware('jwt.verify');
+Route::post('siAdmino/users/any-role/edit/{id}', 'Api\User\UserController@editUser')->middleware('jwt.verify');
+Route::post('siAdmino/users/any-role/delete/{id}', 'Api\User\UserController@deleteUser')->middleware('jwt.verify');
+Route::get('siAdmino/users/admin/list', 'Api\User\UserController@getAdminUsers')->middleware('jwt.verify');

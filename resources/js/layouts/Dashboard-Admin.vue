@@ -17,7 +17,7 @@
         </v-list-item>
 
         <v-list-group
-          prepend-icon="mdi-note-text-outline"
+          prepend-icon="mdi-account-multiple"
           value
         >
           <template v-slot:activator>
@@ -31,17 +31,17 @@
           >
             <v-list-item-title>Create User</v-list-item-title>
             <v-list-item-icon>
-              <v-icon>mdi-note-plus-outline</v-icon>
+              <v-icon>mdi-account-plus</v-icon>
             </v-list-item-icon>
           </v-list-item>
           <v-list-item
             link
             color="red"
-            href="/siAdmino/users/create"
+            href="/siAdmino/users/cashier/list"
           >
-            <v-list-item-title>Users List</v-list-item-title>
+            <v-list-item-title>Cashier Users List</v-list-item-title>
             <v-list-item-icon>
-              <v-icon>mdi-note-plus-outline</v-icon>
+              <v-icon>mdi-account</v-icon>
             </v-list-item-icon>
           </v-list-item>
         </v-list-group>

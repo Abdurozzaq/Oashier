@@ -31,6 +31,7 @@ import PasswordSettingPage from "./pages/cashier/settings/PasswordSetting.vue"
 import AdminIdentitySettingsPage from "./pages/admin/settings/IdentitySettings.vue"
 import AdminPasswordSettingPage from "./pages/admin/settings/PasswordSetting.vue"
 import AdminCreateUserPage from "./pages/admin/users/CreateUser.vue"
+import AdminCashierUsersListPage from "./pages/admin/users/CashierUsersList.vue"
 
 
 import Component from "./components/ExampleComponent.vue"
@@ -299,6 +300,14 @@ export const routes = [
                 component: AdminCreateUserPage,
                 meta: {
                     title: 'Create User - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, adminOnly, verifiedEmail]),
+            },
+            {
+                path: "users/cashier/list",
+                component: AdminCashierUsersListPage,
+                meta: {
+                    title: 'Cashier Users List - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, adminOnly, verifiedEmail]),
             }

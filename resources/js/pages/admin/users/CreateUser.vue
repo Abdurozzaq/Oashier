@@ -20,7 +20,7 @@
               >
                 mdi-food-fork-drink
               </v-icon>
-              <span color="white" class="title white--text">Create Cashier User</span>
+              <span color="white" class="title white--text">Create User</span>
             </v-card-title>
             
               <v-card-text class="headline font-weight-bold">

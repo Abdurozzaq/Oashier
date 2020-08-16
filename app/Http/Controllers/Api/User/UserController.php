@@ -67,4 +67,58 @@ class UserController extends Controller
             'message' => 'Please confirm the new user account email address by clicking on verify user button sent to you on his email'
         ], 200);
     }
+
+
+    public function getCashierUsers() {
+        $cashiers = User::role('cashier')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $cashiers
+        ], 200);
+    }
+
+    public function getAdminUsers() {
+        $admins = User::role('admin')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $admins
+        ], 200);
+    }
+
+    public function editUser(Request $request, $id) {
+
+        $this->validate($request, [
+            'first_name' => 'required',
+            'last_name' => 'required',
+        ]);
+
+        $user = User::where('id', $id)->first();
+        $user->first_name = $request['first_name'];
+        $user->last_name = $request['last_name'];
+        if($request['restaurant_name']) {
+            $user->restaurant_name = $request['restaurant_name'];
+        }
+        if($request['address']) {
+            $user->address = $request['address'];
+        }
+        $user->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User has been successfully edited.'
+        ], 200);
+    }
+
+    public function deleteUser($id) {
+
+        $user = User::where('id', $id)->first();
+        $user->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User has been successfully deleted.'
+        ], 200);
+    }
 }
