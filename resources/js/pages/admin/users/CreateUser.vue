@@ -338,7 +338,12 @@
 
               currentObj.$v.$reset()
               
-              currentObj.$router.push('/siAdmino/users/list')
+              if(currentObj.role == 'admin') {
+                currentObj.$router.push('/siAdmino/users/admin/list')
+              } else {
+                currentObj.$router.push('/siAdmino/users/cashier/list')
+              }
+              
 
             })
             .catch(function (error) {

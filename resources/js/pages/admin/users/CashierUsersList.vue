@@ -407,6 +407,8 @@
               currentObj.snackText = 'Cashier details has been successfully Edited'
               currentObj.closeAndResetVar()
               currentObj.getData()
+              currentObj.usersListFiltered = null
+              currentObj.search = null
             })
             .catch(function (error) {
               if(error.response) {
@@ -429,6 +431,8 @@
             currentObj.snackColor = 'success'
             currentObj.snackText = 'Cashier has been successfully deleted'
             currentObj.getData()
+            currentObj.usersListFiltered = null
+            currentObj.search = null
           })
           .catch(function (error) {
             if(error.response) {
