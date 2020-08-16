@@ -96,8 +96,8 @@
           <v-divider></v-divider>
 
           <v-list shaped dense>
-            <v-subheader>REPORTS</v-subheader>
-            <v-list-item-group v-model="itemPopup" color="primary">
+            <v-subheader>Account</v-subheader>
+            <v-list-item-group color="primary">
               <v-list-item
                 v-for="(ip, i) in itemsPopup"
                 :key="i"

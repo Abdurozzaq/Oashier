@@ -161,7 +161,7 @@
 
           <v-divider></v-divider>
 
-          <v-list dense>
+          <v-list shaped dense>
             <v-subheader>Account</v-subheader>
             <v-list-item-group color="primary">
               <v-list-item
