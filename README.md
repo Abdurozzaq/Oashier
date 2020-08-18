@@ -62,7 +62,7 @@ or if you want to run on another port, use the command:
 Thank you, Good Luck ... 😁
 
 # The Accounts on seeder:
-Admin Account - Eamil: admmin@gmail.com, Password: password
+Admin Account - Eamil: admin@gmail.com, Password: password
 
 Cashier Account - Email: user@gmail.com, Password: password
 
