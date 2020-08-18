@@ -17,13 +17,13 @@
 
     <v-card>
       <v-card-title>
-      Your Cashier Users List
+      Your Admin Users List
         <v-spacer></v-spacer>
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
           label="Search"
-          hint="Search By User Name, Email And Restaurant Name"
+          hint="Search By User Name And Email"
           persistent-hint
           single-line
           append-outer-icon="mdi-send"
@@ -39,6 +39,10 @@
         :items-per-page="5"
         class="elevation-1"
       >
+
+        <template v-slot:[`item.first_name`]="{ item }">
+          <span>{{ item.first_name }} <b>(You)</b></span>
+        </template>
 
         <template v-slot:[`item.created_at`]="{ item }">
           <span>{{ new Date(item.created_at).toLocaleString() }}</span>
@@ -56,7 +60,7 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
+              <v-btn disabled="props.item.id == currentUserId" v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
                 <v-icon dark>mdi-account-remove</v-icon>
               </v-btn>
             </template>
@@ -75,6 +79,10 @@
         class="elevation-1"
       >
 
+        <template v-slot:[`item.first_name`]="{ item }">
+          <span>{{ item.first_name }} <b>(You)</b></span>
+        </template>
+
         <template v-slot:[`item.created_at`]="{ item }">
           <span>{{ new Date(item.created_at).toLocaleString() }}</span>
         </template>
@@ -92,7 +100,7 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
+              <v-btn disabled="props.item.id == currentUserId" v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
                 <v-icon dark>mdi-account-remove</v-icon>
               </v-btn>
             </template>
@@ -116,10 +124,10 @@
     </v-card>
 
     <v-dialog
-      v-model="cashierDetailsDialog"
+      v-model="adminDetailsDialog"
       width="500"
     >
-      <v-form @submit.prevent="editCashier()">
+      <v-form @submit.prevent="editAdmin()">
         <v-alert
           v-model="editErrorAlert"
           border="top"
@@ -136,7 +144,7 @@
 
         <v-card>
           <v-card-title class="headline grey lighten-2">
-            Edit Cashier Details
+            Edit Admin Details
           </v-card-title>
 
           <v-card-text>
@@ -161,20 +169,6 @@
               @input="$v.edit_last_name.$touch()" 
               @blur="$v.edit_last_name.$touch()"
             ></v-text-field>
-            <v-text-field
-              label="Restaurant Name"
-              hint="Restaurant Name"
-              persistent-hint
-              filled
-              v-model="edit_restaurant_name"
-            ></v-text-field>
-            <v-text-field
-              label="Address"
-              hint="Address"
-              persistent-hint
-              filled
-              v-model="edit_address"
-            ></v-text-field>
           </v-card-text>
 
           <v-divider></v-divider>
@@ -192,7 +186,7 @@
               color="success"
               text
               type="submit"
-              @click.prevent="editCashier()"
+              @click.prevent="editAdmin()"
             >
               EDIT
             </v-btn>
@@ -201,7 +195,7 @@
       </v-form>
       <v-overlay
         :absolute="true"
-        :value="overlayEditCashier"
+        :value="overlayEditAdmin"
       >
         <v-progress-circular
           :size="50"
@@ -230,16 +224,14 @@
       return {
 
         // User List
-        cashierDetailsDialog: false,
-        overlayEditCashier: false,
+        adminDetailsDialog: false,
+        overlayEditAdmin: false,
         total: null,
 
         // Form
         edit_id: null,
         edit_first_name: null,
         edit_last_name: null,
-        edit_restaurant_name: null,
-        edit_address: null,
 
         // Form Response
         editErrorAlert: false,
@@ -254,6 +246,10 @@
 
         // Data Table
         search: null,
+
+
+        // Delete Button 
+        currentUserId: null,
         
         usersList: null,
         usersListFiltered: null,
@@ -270,18 +266,6 @@
             align: 'start',
             sortable: true,
             value: 'last_name',
-          },
-          {
-            text: 'Restaurant Name',
-            align: 'start',
-            sortable: true,
-            value: 'restaurant_name',
-          },
-          {
-            text: 'Address',
-            align: 'start',
-            sortable: true,
-            value: 'address',
           },
           {
             text: 'Email',
@@ -330,7 +314,7 @@
         let currentObj = this
 
         currentObj.overlay = true
-        axios.get('api/siAdmino/users/cashier/list')
+        axios.get('api/siAdmino/users/admin/list')
           .then(function (response) {
 
             currentObj.usersList = response.data.data
@@ -349,14 +333,12 @@
         let currentObj = this
         if (currentObj.search != null) {
           currentObj.usersListFiltered = currentObj.usersList.filter(
-            cashier => 
-            cashier.first_name.toLowerCase().includes(currentObj.search.toLowerCase()) 
+            admin => 
+            admin.first_name.toLowerCase().includes(currentObj.search.toLowerCase()) 
             ||
-            cashier.last_name.toLowerCase().includes(currentObj.search.toLowerCase())
+            admin.last_name.toLowerCase().includes(currentObj.search.toLowerCase())
             ||
-            cashier.restaurant_name.toLowerCase().includes(currentObj.search.toLowerCase())
-            ||
-            cashier.email.toLowerCase().includes(currentObj.search.toLowerCase())
+            admin.email.toLowerCase().includes(currentObj.search.toLowerCase())
           )
 
         } else {
@@ -367,25 +349,23 @@
 
       openEditDetails: function(item) {
         let currentObj = this
-        currentObj.cashierDetailsDialog = true
+        currentObj.adminDetailsDialog = true
 
         currentObj.edit_id = item.id
         currentObj.edit_first_name = item.first_name
         currentObj.edit_last_name = item.last_name
-        currentObj.edit_restaurant_name = item.restaurant_name
-        currentObj.edit_address = item.address
       },
 
       closeAndResetVar: function () {
         let currentObj = this
 
-        currentObj.cashierDetailsDialog = false
+        currentObj.adminDetailsDialog = false
       },
 
-      editCashier: function () {
+      editAdmin: function () {
         let currentObj = this
 
-        currentObj.overlayEditCashier = true
+        currentObj.overlayEditAdmin = true
         if (currentObj.$v.$invalid) {
           currentObj.snack = true
           currentObj.snackColor = 'error'
@@ -394,14 +374,12 @@
           axios.post('api/siAdmino/users/any-role/edit/' + currentObj.edit_id, {
             first_name: currentObj.edit_first_name,
             last_name: currentObj.edit_last_name,
-            restaurant_name: currentObj.edit_restaurant_name,
-            address: currentObj.edit_address,
           })
             .then(function (response) {
-              currentObj.overlayEditCashier = false
+              currentObj.overlayEditAdmin = false
               currentObj.snack = true
               currentObj.snackColor = 'success'
-              currentObj.snackText = 'Cashier details has been successfully Edited'
+              currentObj.snackText = 'Admin details has been successfully Edited'
               currentObj.closeAndResetVar()
               currentObj.getData()
               currentObj.usersListFiltered = null
@@ -412,7 +390,7 @@
                 currentObj.editServerError = error.response.data.errors
                 currentObj.editErrorAlert = true
               }
-              currentObj.overlayEditCashier = false
+              currentObj.overlayEditAdmin = false
             })
         }
       },
@@ -426,7 +404,7 @@
             currentObj.overlay = false
             currentObj.snack = true
             currentObj.snackColor = 'success'
-            currentObj.snackText = 'Cashier has been successfully deleted'
+            currentObj.snackText = 'Admin has been successfully deleted'
             currentObj.getData()
             currentObj.usersListFiltered = null
             currentObj.search = null
@@ -438,6 +416,19 @@
             }
             currentObj.overlay = false
           })
+      },
+
+      getMe: function() {
+        let currentObj = this
+        axios.get('api/auth/me')
+          .then(function (response) {
+            currentObj.currentUserId = response.data.user.id 
+          })
+          .catch(function (error) {
+            if(error.response) {
+              console.log(error.response.data.errors)
+            }
+          })
       }
     }, // End of Methods
 
@@ -447,6 +438,7 @@
       let currentObj = this
 
       currentObj.getData()
+      currentObj.getMe()
     }
   }
 </script>

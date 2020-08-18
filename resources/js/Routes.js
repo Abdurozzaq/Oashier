@@ -32,7 +32,7 @@ import AdminIdentitySettingsPage from "./pages/admin/settings/IdentitySettings.v
 import AdminPasswordSettingPage from "./pages/admin/settings/PasswordSetting.vue"
 import AdminCreateUserPage from "./pages/admin/users/CreateUser.vue"
 import AdminCashierUsersListPage from "./pages/admin/users/CashierUsersList.vue"
-
+import AdminAdminUsersListPage from "./pages/admin/users/AdminUsersList.vue"
 
 import Component from "./components/ExampleComponent.vue"
 
@@ -308,6 +308,14 @@ export const routes = [
                 component: AdminCashierUsersListPage,
                 meta: {
                     title: 'Cashier Users List - OASHIER',
+                },
+                beforeEnter: multiguard([pageTitle, ifAuthenticated, adminOnly, verifiedEmail]),
+            },
+            {
+                path: "users/admin/list",
+                component: AdminAdminUsersListPage,
+                meta: {
+                    title: 'Admin Users List - OASHIER',
                 },
                 beforeEnter: multiguard([pageTitle, ifAuthenticated, adminOnly, verifiedEmail]),
             }
