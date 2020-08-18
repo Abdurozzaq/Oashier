@@ -60,7 +60,7 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn disabled="props.item.id == currentUserId" v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
+              <v-btn :disabled="props.item.id == currentUserId" v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
                 <v-icon dark>mdi-account-remove</v-icon>
               </v-btn>
             </template>
@@ -100,7 +100,7 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn disabled="props.item.id == currentUserId" v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
+              <v-btn :disabled="props.item.id == currentUserId" v-bind="attrs" v-on="on" class="ma-2" fab dark small color="red" @click.prevent="deleteUser(props.item)">
                 <v-icon dark>mdi-account-remove</v-icon>
               </v-btn>
             </template>

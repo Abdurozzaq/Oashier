@@ -9,18 +9,18 @@
         <v-form @submit.prevent="createCashierUser">
           <v-card
             class=" mx-auto"
-            color="deep-orange lighten-1"
+            color="red lighten-5"
             elevation="8"
           >
             <v-card-title>
               <v-icon
                 large
                 left
-                color="white"
+                color="grey darken-4"
               >
                 mdi-food-fork-drink
               </v-icon>
-              <span color="white" class="title white--text">Create User</span>
+              <span class="title grey--text text--darken-4">Create User</span>
             </v-card-title>
             
               <v-card-text class="headline font-weight-bold">
@@ -32,7 +32,7 @@
                       v-model="errorAlert"
                       border="top"
                       color="red lighten-2"
-                      dark
+                      
                       dismissible
                     >
                       <ul v-for="(error, index) in serverError" v-bind:key="index">
@@ -48,7 +48,7 @@
                       persistent-hint
                       single-line
                       filled
-                      dark
+                      
                       required
                       :error-messages="firstNameErrors"
                       v-model="first_name"
@@ -62,7 +62,7 @@
                       persistent-hint
                       single-line
                       filled
-                      dark
+                      
                       required
                       :error-messages="lastNameErrors"
                       v-model="last_name"
@@ -77,7 +77,7 @@
                       persistent-hint
                       single-line
                       filled
-                      dark
+                      
                       required
                       v-model="restaurant_name"
                     ></v-text-field>
@@ -88,7 +88,7 @@
                       persistent-hint
                       single-line
                       filled
-                      dark
+                      
                       required
                       :error-messages="emailErrors"
                       v-model="email"
@@ -103,7 +103,7 @@
                       persistent-hint
                       single-line
                       filled
-                      dark
+                      
                       required
                       v-model="address"
                     ></v-text-field>
@@ -112,7 +112,7 @@
                       label="Your New Password"
                       single-line
                       filled
-                      dark
+                      
                       required
                       type="password"
                       :error-messages="passwordErrors"
@@ -125,7 +125,7 @@
                       label="Confirm Your Password"
                       single-line
                       filled
-                      dark
+                      
                       required
                       type="password"
                       :error-messages="passwordConfirmationErrors"
@@ -138,7 +138,7 @@
                       :items="roles"
                       v-model="role"
                       filled
-                      dark
+                      
                       label="User Role"
                       hint="User Role"
                       persistent-hint
@@ -155,7 +155,7 @@
                     align="center"
                     justify="end"
                   >
-                    <v-btn type="submit" >Create</v-btn>
+                    <v-btn color="red darken-1" type="submit" >Create</v-btn>
                   </v-row>
                 </v-list-item>
               </v-card-actions>
