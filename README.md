@@ -60,7 +60,11 @@ or if you want to run on another port, use the command:
   ```$ php artisan serve --port: 627 // e.g. the port is "627"```
 
 And for serving the vue JS run this command:
+
+
 For Development : ```npm run watch```
+
+
 For Production : ``` npm run prod```
 
 Thank you, Good Luck ... 😁
