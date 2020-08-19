@@ -3,23 +3,26 @@ A Cashier Web App Made With Laravel, VueJS, And Vuetify
 
 ![Image of Yaktocat](https://github.com/Abdurozzaq/Oashier/blob/master/docs/screenshoots/CashierHomeDashboard.png)
 
-Features
+**Features**
 
-User Roles
+
+**User Roles**
 
 Admin, Cashier
 
-Basic Features
+**Basic Features**
 
 Authentication, Create Menu, Edit Menu, Set Menu Stock,
 Create Order, Edit Order Details, 
 Add & Edit Menu On Every Order And Menu Stock Automatically Changed,
 Cancel Order, And Cash Payment.
 
-User Manager
+**User Manager**
 
 Create Cashier, Manage Cashier Profile,
 Create Admin, Manage Admin Profile.
+
+
 
 # Installation
 
@@ -68,6 +71,8 @@ For Development : ```npm run watch```
 For Production : ``` npm run prod```
 
 Thank you, Good Luck ... 😁
+
+
 
 # The Accounts on seeder:
 Admin Account - Emaill: admin@gmail.com, Password: password
