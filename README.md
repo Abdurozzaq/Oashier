@@ -6,6 +6,7 @@ A Cashier Web App Made With Laravel, VueJS, And Vuetify
 Features
 
 User Roles
+
 Admin, Cashier
 
 Basic Features
@@ -64,13 +65,12 @@ And for serving the vue JS run this command:
 
 For Development : ```npm run watch```
 
-
 For Production : ``` npm run prod```
 
 Thank you, Good Luck ... 😁
 
 # The Accounts on seeder:
-Admin Account - Eamil: admin@gmail.com, Password: password
+Admin Account - Emaill: admin@gmail.com, Password: password
 
 Cashier Account - Email: user@gmail.com, Password: password
 
