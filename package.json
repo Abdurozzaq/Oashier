@@ -26,6 +26,7 @@
     },
     "dependencies": {
         "@supercharge/strings": "^1.11.0",
+        "lodash-webpack-plugin": "^0.11.5",
         "material-design-icons-iconfont": "^5.0.1",
         "moment": "^2.27.0",
         "vue-axios": "^2.1.5",

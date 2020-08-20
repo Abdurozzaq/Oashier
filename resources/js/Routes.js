@@ -12,6 +12,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword.vue"
 import ResetPassword from "./pages/auth/ResetPassword.vue"
 import ResendVerificationMail from "./pages/auth/ResendVerificationMail.vue"
 import RedirectAfterVerify from "./pages/auth/RedirectAfterVerify.vue"
+import UnverifiedEmail from "./pages/auth/UnverifiedEmail.vue"
 
 // FOr Cashier
 import LandingPage from "./pages/LandingPage.vue"
@@ -154,6 +155,30 @@ const verifiedEmail = (to, from, next) => {
                 // handle error
                 console.log(error);
             })
+}
+
+/**
+ * Guard For
+ * Un Verified User Email
+ */
+const unVerifiedEmail = (to, from, next) => {
+
+    axios.get('api/auth/me')
+        .then(function (response) {
+            // handle success
+            let isVerified = response.data.user.email_verified_at
+            if (isVerified == null) {
+                next('/UnverifiedEmail')
+                return
+            } else {
+                next()
+                return
+            }
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        })
 }
 
 const pageTitle = (to, from, next) => {
@@ -371,6 +396,12 @@ export const routes = [
         meta: {
             title: 'Verification Success - OASHIER',
         },
-        beforeEnter: multiguard([ifNotAuthenticated]),
+    },
+    {
+        path: "/UnverifiedEmail",
+        component: UnverifiedEmail,
+        meta: {
+            title: 'Unverified Email Address - OASHIER',
+        },
     }
 ];
