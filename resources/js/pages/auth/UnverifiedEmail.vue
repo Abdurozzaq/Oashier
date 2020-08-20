@@ -40,6 +40,13 @@
               >
                 <v-btn href="/resend-verification-mail" outlined class="mr-2" color="white">Resend Verification Mail?</v-btn>
               </v-toolbar>
+              <v-toolbar
+                color="grey darken-4"
+                dark
+                flat
+              >
+                <v-btn @click.prevent="logout()" outlined class="mr-2" color="white">Logout / Change Account</v-btn>
+              </v-toolbar>
             </v-card>
           </v-col>
         </v-row>
@@ -78,7 +85,17 @@
     },
 
     methods: {
-      
+      logout: function() {
+        let currentObj = this
+          axios.post('/api/auth/logout')
+          .then(function (response) {
+            localStorage.removeItem('userToken')
+            currentObj.$router.push('/login')
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      },
     } // end of methods
   }
 </script>

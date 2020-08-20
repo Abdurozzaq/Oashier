@@ -23,6 +23,9 @@
       <v-btn v-if="isLoggedIn == true" @click="goToDash" text>
         GO TO DASH
       </v-btn>
+      <v-btn v-if="isLoggedIn == true" text @click="logout">
+        Logout
+      </v-btn>
     </v-app-bar>
 
     <!-- Sizes your content based upon application components -->
@@ -102,7 +105,19 @@
             // handle error
             console.log(error);
         })
-      }
+      },
+
+      logout: function() {
+        let currentObj = this
+          axios.post('/api/auth/logout')
+          .then(function (response) {
+            localStorage.removeItem('userToken')
+            currentObj.$router.push('/login')
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      },
     }, // End of Methods
 
     mounted: function() {
