@@ -53,7 +53,7 @@
                     <v-img
                       v-if="menu.menu_picture"
                       height="150"
-                      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                      :src="menu.menu_picture"
                     ></v-img>
 
                     <v-img
