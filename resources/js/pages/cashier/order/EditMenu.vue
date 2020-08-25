@@ -11,7 +11,7 @@
               >
                 mdi-food-fork-drink
               </v-icon>
-              <span color="white" class="title grey--text">Add Menu To Ozzaq's Order</span>
+              <span color="white" class="title grey--text">Add Menu To Order</span>
             </v-card-title>
           </v-card>
 
