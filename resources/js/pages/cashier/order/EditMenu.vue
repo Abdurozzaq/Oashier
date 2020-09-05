@@ -26,7 +26,7 @@
                 single-line
                 hide-details
                 append-outer-icon="mdi-send"
-
+                @click:append-outer="searchMenu()"
               ></v-text-field>
             </v-card-title>
 
@@ -38,9 +38,70 @@
                 center-active
                 multiple 
                 show-arrows
+                v-if="menuList && menuListFiltered == null"
               >
                 <v-slide-item
                   v-for="(menu, index) in menuList"
+                  :key="index"
+                  class="mx-auto"
+                >
+
+                  <v-card
+                    :loading="loading"
+                    class="mx-5 my-8 blue-grey lighten-5"
+                    width="200px"
+                  >
+                    <v-img
+                      v-if="menu.menu_picture"
+                      height="150"
+                      :src="menu.menu_picture"
+                    ></v-img>
+
+                    <v-img
+                      v-else
+                      height="150"
+                      src="/statics/menu.jpg"
+                    ></v-img>
+
+                    <div class="mx-4 mt-3">
+                      <div class="text-h6">{{ menu.menu_name }}</div>
+                      <div class="subtitle-1">
+                        Rp.{{ menu.menu_price }}
+                      </div>
+                      <div class="subtitle-1">
+                        {{ menu.menu_stock_qty }} left
+                      </div>
+                    </div>
+
+                    <v-card-text>
+                      {{ menu.menu_description}}
+                    </v-card-text>
+
+                    <v-divider class="mx-4"></v-divider>
+
+                    <v-card-actions>
+                      <v-btn
+                        color="deep-purple lighten-2"
+                        text
+                        @click.prevent="addMenuToOrder(menu)"
+                        :disabled="menu.menu_stock_qty == 0"
+                      >
+                        Add To Order
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+
+                </v-slide-item>
+              </v-slide-group>
+
+              <v-slide-group 
+                center-active
+                multiple 
+                show-arrows
+                v-if="menuList && menuListFiltered != null"
+              >
+                <v-slide-item
+                  v-for="(menu, index) in menuListFiltered"
                   :key="index"
                   class="mx-auto"
                 >
@@ -316,6 +377,7 @@ export default {
     data() {
         return {
           menuList: null,
+          menuListFiltered: null,
           maxSlider: null,
           search: null,
           loading: false,
@@ -591,6 +653,22 @@ export default {
 
             currentObj.overlayAddedMenu = false
           })
+      }, 
+
+      searchMenu: function() {
+        let currentObj = this
+        console.log('test')
+        if (currentObj.search != null) {
+          currentObj.menuListFiltered = currentObj.menuList.filter(
+            menu => menu.menu_name.toLowerCase().includes(currentObj.search.toLowerCase()) ||
+            menu.menu_price.toLowerCase().includes(currentObj.search.toLowerCase()) ||
+            menu.menu_description.toLowerCase().includes(currentObj.search.toLowerCase())
+          )
+
+        } else {
+          currentObj.orderListFiltered = null
+        }
+
       }
     }, // end of methods
 

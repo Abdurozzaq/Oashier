@@ -26,7 +26,7 @@ if (token) {
 }
 
 Vue.use(VueRouter);
-Vue.use(Vuelidate)
+Vue.use(Vuelidate);
 const router = new VueRouter({
     mode: 'history',
     routes
