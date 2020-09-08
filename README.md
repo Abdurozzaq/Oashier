@@ -38,6 +38,7 @@ In Terminal, navigate to the extracted Oashier folder.
 Enter these commands one by one (without the $ sign),
   ```
   $ composer install
+  $ npm install
   $ cp .env.example .env
   $ php artisan key:generate
   $ php artisan storage:link
