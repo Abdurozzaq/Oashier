@@ -42,6 +42,7 @@ Enter these commands one by one (without the $ sign),
   $ cp .env.example .env
   $ php artisan key:generate
   $ php artisan storage:link
+  $ php artisan jwt:secret
   ```
   
 Edit the .env file like this,
