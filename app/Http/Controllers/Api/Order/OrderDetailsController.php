@@ -132,15 +132,27 @@ class OrderDetailsController extends Controller
     public function deleteMenuFromOrder($code) {
         $orderDetails = OrderDetails::where('code', $code)->first();
 
-        $menu = RestaurantMenu::where('id', $orderDetails->menu_id)->first();
-        $menu->menu_stock_qty = $menu->menu_stock_qty + $orderDetails->quantity;
-        $menu->save();
+        if ($orderDetails == null || $orderDetails == '') {
 
-        $orderDetails->delete();
-    
-        return response()->json([
-          'status' => 'success',
-          'message' => 'Menu Deleted Successfully From Order',
-        ], 200);
+          return response()->json([
+            'status' => 'success',
+            'message' => 'Menu is not saved, delete it from client!',
+          ], 200);
+
+        } else {
+
+          $menu = RestaurantMenu::where('id', $orderDetails->menu_id)->first();
+          $menu->menu_stock_qty = $menu->menu_stock_qty + $orderDetails->quantity;
+          $menu->save();
+
+          $orderDetails->delete();
+      
+          return response()->json([
+            'status' => 'success',
+            'message' => 'Menu Deleted Successfully From Order',
+          ], 200);
+
+        }
+
       }
 }
