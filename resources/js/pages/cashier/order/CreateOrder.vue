@@ -58,9 +58,6 @@
                       label="Order Note"
                       hint="Optional"
                       v-model="order_note"
-                      :error-messages="orderNoteErrors"
-                      @input="$v.order_note.$touch()"
-                      @blur="$v.order_note.$touch()"
                     ></v-textarea>
 
                   </v-col>
@@ -128,7 +125,6 @@
 </template>
 
 <script>
-  import { required, numeric } from 'vuelidate/lib/validators'
   import axios from 'axios'
   export default {
     name: 'CreateMenuPage',
@@ -149,66 +145,39 @@
       }
     }, // end of data()
 
-    validations: {
-      order_note: {
-        required,
-      },
-      order_number: {
-        required,
-      }
-    }, // end of validations
-
-    computed: {
-      orderNoteErrors () {
-        let currentObj = this
-        const errors = []
-        if (!currentObj.$v.order_note.$dirty) return errors
-        !currentObj.$v.order_note.required && errors.push('Order Note is required.')
-        return errors
-      },
-    },
-
     methods: {
 
       createMenu: function() {
 
         let currentObj = this
 
-        currentObj.$v.$touch()
+        currentObj.errorAlert = false
+        currentObj.overlay = true
 
-        if (currentObj.$v.$invalid) {
-          currentObj.errorSnackbar = true
-        } else {
-          currentObj.errorAlert = false
-          currentObj.overlay = true
+        axios.post('api/order/create', {
+          'order_number': currentObj.order_number,
+          'order_note': currentObj.order_note,
+        })
+          .then(function (response) {
 
-          axios.post('api/order/create', {
-            'order_number': currentObj.order_number,
-            'order_note': currentObj.order_note,
+            // after success show successSnackbar
+            currentObj.successSnackbar = true
+
+            currentObj.overlay = false
+
+            let id = response.data.id
+            currentObj.$router.push({ path: '/home/order/edit', query: { id: id }})
+
+            // currentObj.$router.push('/home/menu/list')
+
           })
-            .then(function (response) {
-
-              // after success show successSnackbar
-              currentObj.successSnackbar = true
-
-              currentObj.overlay = false
-
-              currentObj.$v.$reset()
-
-              let id = response.data.id
-              currentObj.$router.push({ path: '/home/order/edit', query: { id: id }})
-
-              // currentObj.$router.push('/home/menu/list')
-
-            })
-            .catch(function (error) {
-              currentObj.overlay = false
-              if(error.response) {
-                currentObj.serverError = error.response.data.errors
-                currentObj.errorAlert = true
-              }
-            })
-        }
+          .catch(function (error) {
+            currentObj.overlay = false
+            if(error.response) {
+              currentObj.serverError = error.response.data.errors
+              currentObj.errorAlert = true
+            }
+          })
       },
 
       setOrderNumber: function() {

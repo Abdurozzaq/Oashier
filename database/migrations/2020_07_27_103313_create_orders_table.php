@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->string('user_id');
             $table->string('order_number');
-            $table->string('order_note');
+            $table->string('order_note')->nullable();
             $table->string('customer_nominal')->nullable();
             $table->string('change_money')->nullable();
             $table->boolean('is_cancelled')->default(false);
