@@ -41,7 +41,7 @@
       >
 
         <template v-slot:[`item.first_name`]="{ item }">
-          <span>{{ item.first_name }} <b>(You)</b></span>
+          <span>{{ item.first_name }} <b v-if="item.id == currentUserId">(You)</b></span>
         </template>
 
         <template v-slot:[`item.created_at`]="{ item }">
@@ -80,7 +80,7 @@
       >
 
         <template v-slot:[`item.first_name`]="{ item }">
-          <span>{{ item.first_name }} <b>(You)</b></span>
+          <span>{{ item.first_name }} <b v-if="item.id == currentUserId">(You)</b></span>
         </template>
 
         <template v-slot:[`item.created_at`]="{ item }">
@@ -176,11 +176,11 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              color="primary"
+              color="red"
               text
               @click.prevent="closeAndResetVar()"
             >
-              OK
+              CANCEL
             </v-btn>
             <v-btn
               color="success"
