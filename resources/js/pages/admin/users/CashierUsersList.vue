@@ -182,11 +182,11 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
-              color="primary"
+              color="red"
               text
               @click.prevent="closeAndResetVar()"
             >
-              OK
+              CANCEL
             </v-btn>
             <v-btn
               color="success"
