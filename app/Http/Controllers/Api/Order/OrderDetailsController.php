@@ -135,7 +135,7 @@ class OrderDetailsController extends Controller
         if ($orderDetails == null || $orderDetails == '') {
 
           return response()->json([
-            'status' => 'success',
+            'status' => 'successNoMenuSaved',
             'message' => 'Menu is not saved, delete it from client!',
           ], 200);
 

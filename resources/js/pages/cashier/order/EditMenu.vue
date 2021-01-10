@@ -556,9 +556,11 @@ export default {
             currentObj.snack = true
             currentObj.snackColor = 'success'
             currentObj.snackText = 'Menu Has Been Removed From List'
-            currentObj.getMenu()
-            currentObj.getAddedMenu()
-            currentObj.setTotal()
+            if(response.data.status == "success") {
+              currentObj.getMenu()
+              currentObj.getAddedMenu()
+              currentObj.setTotal()
+            }
           })
           .catch(function (error) {
             currentObj.overlay = false
@@ -584,7 +586,8 @@ export default {
             'quantity': 1,
             'one_unit_price': menu.menu_price,
             'total_price': menu.menu_price,
-            'stock_qty': menu.menu_stock_qty
+            'stock_qty': menu.menu_stock_qty,
+            'not_saved': true
           })
           currentObj.setTotal()
         } else {
@@ -599,7 +602,8 @@ export default {
               'quantity': 1,
               'one_unit_price': menu.menu_price,
               'total_price': menu.menu_price,
-              'stock_qty': menu.menu_stock_qty
+              'stock_qty': menu.menu_stock_qty,
+              'not_saved': true
             })
             currentObj.setTotal()
           } else {
@@ -624,7 +628,19 @@ export default {
         currentObj.overlayAddedMenu = true
         axios.post('api/order/details/list/' + id)
           .then(function (response) {
-            currentObj.addedMenu = response.data.menu || []
+            if(currentObj.addedMenu.length === 0) {
+              currentObj.addedMenu = response.data.menu || []
+            } else {
+              var any_not_saved = currentObj.addedMenu.filter(ans => ans.not_saved == true)
+              if(any_not_saved.length === 0) {
+                currentObj.addedMenu = response.data.menu || []
+                console.log('ans = 0')
+              } else {
+                // currentObj.addedMenu.push(response.data.menu)
+                console.log('ans != 0')
+              }
+            }
+            
             currentObj.overlayAddedMenu = false
             currentObj.setTotal()
           })
@@ -641,6 +657,7 @@ export default {
             currentObj.snackColor = 'success'
             currentObj.snackText = 'Menu Saved Succesfully'
             currentObj.overlayAddedMenu = false
+            currentObj.addedMenu = []
             currentObj.getMenu()
             currentObj.getAddedMenu()
           })
@@ -673,10 +690,13 @@ export default {
     }, // end of methods
 
     beforeMount: function () {
-        let currentObj = this
-        currentObj.getMenu()
-        currentObj.getAddedMenu()
+      let currentObj = this
+      currentObj.getMenu()
+      currentObj.getAddedMenu()
 
+      // setTimeout(function(){ 
+      //   currentObj.getAddedMenu()
+      // }, 3000);
     }
 }
 </script>
