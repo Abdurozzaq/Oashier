@@ -33,6 +33,6 @@
         "vue-router": "^3.3.4",
         "vue-router-multiguard": "^1.0.3",
         "vuelidate": "^0.7.5",
-        "vuetify": "^2.3.7"
+        "vuetify": "^2.6.10"
     }
 }
